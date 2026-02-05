@@ -18,6 +18,14 @@ A polished brick-breaking game featuring multi-ball madness, power-ups, screen s
 > *Chill Puzzle Logic*
 Connect emitters to receivers by rotating pipes. Mix primary colors (Red, Green, Blue) to create new ones (Magenta, Yellow, Cyan) and complete the circuit. Features glowing visuals and procedural tones.
 
+### 3. Orbit
+> *Gravity Defense*
+A tense physics survival game. You play as a stylized Sun. Use a slingshot mechanic to launch projectiles, deflect diving comets, and maintain planetary orbits. Features N-body gravity simulation and bullet time.
+
+### 4. Asteroids
+> *Neon Vector Shooter*
+A modern, neon-soaked take on the arcade classic. Pilot a ship with inertial physics, blast asteroids that split into smaller chunks, and survive infinite waves. Features screen wrapping, particle explosions, and increasing difficulty.
+
 ## 🏗️ Architecture
 The project uses a **Hub-and-Spoke** architecture:
 
