@@ -11,6 +11,7 @@ This document tracks the current implementation status of all games in the Web G
 | **Elemental Sandbox** | Simulation / Creational | Canvas | 🔴 Not Started |
 | **Orbit** | Arcade / Skill | Canvas | 🟢 Release v1.0 |
 | **Asteroids** | Arcade / Shooter | Canvas | 🟢 Release v1.0 |
+| **Neon Blocks** | Puzzle / Arcade | Canvas | 🔴 Not Started |
 
 ---
 
@@ -80,3 +81,13 @@ This document tracks the current implementation status of all games in the Web G
     *   **Waves**: Infinite waves with increasing density.
     *   **Lives**: 3 Lives, respawn timer.
 *   **Tech Stack**: Canvas API, Core Vector2.
+
+## 6. Neon Blocks (Tetris)
+*   **Genre**: Puzzle / Arcade
+*   **Status**: 🔴 Not Started
+*   **Concept**: A high-speed, glowing block stacker.
+*   **Key Features**:
+    *   Classic 10x20 Grid.
+    *   7 Tetromino shapes with unique colors.
+    *   **"Neon" Aesthetic**: Blocks glow and pulse.
+    *   **Mechanics**: Hard Drop, Ghost Piece, Combo Scoring.

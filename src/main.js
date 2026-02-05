@@ -3,6 +3,7 @@ import { CosmicBreaker } from './games/cosmic-breaker/index.js';
 import { NeonFlow } from './games/neon-flow/index.js';
 import { Orbit } from './games/orbit/index.js';
 import { Asteroids } from './games/asteroids/index.js';
+import { NeonBlocks } from './games/neon-blocks/index.js';
 
 console.log('Arcade Lobby Initialized');
 
@@ -35,6 +36,12 @@ const games = [
         title: 'Asteroids',
         description: 'Neon Vector Shooter.',
         class: Asteroids
+    },
+    {
+        id: 'neon-blocks',
+        title: 'Neon Blocks',
+        description: 'Glowing Tetrominoes.',
+        class: NeonBlocks
     }
 ];
 
