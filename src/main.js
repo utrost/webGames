@@ -1,5 +1,6 @@
 import './style.css'
 import { CosmicBreaker } from './games/cosmic-breaker/index.js';
+import { NeonFlow } from './games/neon-flow/index.js';
 
 console.log('Arcade Lobby Initialized');
 
@@ -19,7 +20,7 @@ const games = [
         id: 'neon-flow',
         title: 'Neon Flow',
         description: 'Connect the energy nodes.',
-        class: null // Coming soon
+        class: NeonFlow
     }
 ];
 

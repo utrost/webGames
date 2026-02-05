@@ -8,6 +8,16 @@ To create a "virtual console" feel where users can select from a variety of arca
 *   **Performance**: Vanilla JS + Canvas/WebGL.
 *   **Modularity**: Easy to add new "cartridges" (games).
 
+## 🕹️ Available Games
+
+### 1. Cosmic Breaker
+> *Arcade Breakout with a Twist*
+A polished brick-breaking game featuring multi-ball madness, power-ups, screen shake, and 5 unique levels. Use the "English" mechanic to control ball trajectory.
+
+### 2. Neon Flow
+> *Chill Puzzle Logic*
+Connect emitters to receivers by rotating pipes. Mix primary colors (Red, Green, Blue) to create new ones (Magenta, Yellow, Cyan) and complete the circuit. Features glowing visuals and procedural tones.
+
 ## 🏗️ Architecture
 The project uses a **Hub-and-Spoke** architecture:
 
