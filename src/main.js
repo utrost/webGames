@@ -1,6 +1,7 @@
 import './style.css'
 import { CosmicBreaker } from './games/cosmic-breaker/index.js';
 import { NeonFlow } from './games/neon-flow/index.js';
+import { Orbit } from './games/orbit/index.js';
 
 console.log('Arcade Lobby Initialized');
 
@@ -21,6 +22,12 @@ const games = [
         title: 'Neon Flow',
         description: 'Connect the energy nodes.',
         class: NeonFlow
+    },
+    {
+        id: 'orbit',
+        title: 'Orbit',
+        description: 'Defend the gravity well.',
+        class: Orbit
     }
 ];
 

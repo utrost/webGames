@@ -159,15 +159,31 @@ export class Grid {
             for (let c = 0; c < this.cols; c++) {
                 const tile = this.tiles[r][c];
                 if (tile.type === TILE_TYPES.SINK) {
-                    // Check if active colors include the required color
-                    // Note: If sink is white (#fff), it might require all colors or explicit mix
-                    // For now, simple check: does the active set contain the sink color?
-                    if (!tile.activeColors.has(tile.color)) {
+                    if (!this.colorsMatch(tile.activeColors, tile.color)) {
                         return false;
                     }
                 }
             }
         }
         return true;
+    }
+
+    colorsMatch(activeSet, targetColor) {
+        // Normalizes primary colors
+        const hasRed = activeSet.has('#f00');
+        const hasBlue = activeSet.has('#00f');
+        const hasGreen = activeSet.has('#0f0');
+
+        // Check target requirements
+        switch (targetColor) {
+            case '#f00': return hasRed;
+            case '#00f': return hasBlue;
+            case '#0f0': return hasGreen;
+            case '#f0f': return hasRed && hasBlue; // Magenta
+            case '#ff0': return hasRed && hasGreen; // Yellow
+            case '#0ff': return hasBlue && hasGreen; // Cyan
+            case '#fff': return hasRed && hasBlue && hasGreen; // White
+            default: return false;
+        }
     }
 }
