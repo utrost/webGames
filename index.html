@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Games Arcade</title>
+    <link rel="stylesheet" href="./src/style.css">
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>ARCADE <span class="neon-flicker">LOBBY</span></h1>
+      </header>
+      <main id="game-container">
+        <!-- Game selection or active game canvas will go here -->
+        <div class="lobby-menu">
+          <p>Select a Game:</p>
+          <div class="game-list">
+            <!-- Game cards will be injected here via JS -->
+            <div class="game-card placeholder">
+              <h3>Coming Soon</h3>
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer>
+        <p>Press START to Play</p>
+      </footer>
+    </div>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
