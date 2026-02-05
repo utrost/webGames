@@ -7,7 +7,7 @@ This document tracks the current implementation status of all games in the Web G
 | Game | Genre | Engine | Status |
 | :--- | :--- | :--- | :--- |
 | **Neon Flow** | Puzzle / Creational | Canvas | 🔴 Not Started |
-| **Cosmic Breaker** | Arcade / Action | Custom Arcade Physics | 🟢 Playable Beta |
+| **Cosmic Breaker** | Arcade / Action | Custom Arcade Physics | 🟢 Release v1.0 |
 | **Elemental Sandbox** | Simulation / Creational | Canvas | 🔴 Not Started |
 | **Orbit** | Arcade / Skill | Canvas | 🔴 Not Started |
 
@@ -27,10 +27,11 @@ This document tracks the current implementation status of all games in the Web G
 *   **Concept**: A classic, crisp "Breakout" clone with tight controls and satisfying physics.
 *   **Tech Stack**: Custom Arcade Physics Engine + Canvas.
 *   **Key Features**:
+    *   **Power-Ups**: Multi-ball, Wide Paddle, Extra Life.
+    *   **5 Unique Levels**: Distinct block layouts (Pyramid, Invader, etc.).
+    *   **"Juice"**: Particle explosions and screen shake.
     *   **"English" Mechanics**: Control ball angle by hitting different parts of the paddle.
-    *   **Speed Ramping**: Game gets faster as you break bricks.
-    *   **Served Ball**: Click-to-launch mechanic.
-    *   **AABB Collision**: Precise, predictable bounces.
+    *   **Brick Physics**: Multi-hit bricks with damage states.
 
 ## 3. Elemental Sandbox
 *   **Genre**: Simulation / Creational

@@ -2,6 +2,7 @@ import { Vector2 } from '../../core/Vector2.js';
 import { GameLoop } from '../../core/GameLoop.js';
 import { AudioManager } from '../../core/AudioManager.js';
 import { StorageManager } from '../../core/StorageManager.js';
+import { Levels } from './levels.js';
 
 export class CosmicBreaker {
     constructor(canvasContainer, onGameOver) {
@@ -24,6 +25,7 @@ export class CosmicBreaker {
         this.height = this.canvas.height;
         this.isRunning = false;
         this.score = 0;
+        this.currentLevel = 0;
         this.highScore = this.storage.getHighScore('cosmic-breaker');
         this.lives = 3;
         this.lives = 3;
@@ -102,26 +104,37 @@ export class CosmicBreaker {
 
     createLevel() {
         this.bricks = [];
-        const rows = 6;
-        const cols = 10;
+
+        // Loop levels
+        const levelData = Levels[this.currentLevel % Levels.length];
+        const map = levelData.map;
+
+        const rows = map.length;
+        const cols = map[0].length;
         const padding = 10;
         const brickWidth = (this.width - (cols + 1) * padding) / cols;
         const brickHeight = 25;
 
-        // Define Brick Types by Row (Top to Bottom)
-        // r=0 is top
-        const rowTypes = [
-            { color: '#c0392b', hp: 3, score: 50 }, // Deep Red (Strongest)
-            { color: '#e67e22', hp: 2, score: 30 }, // Orange
-            { color: '#f1c40f', hp: 1, score: 20 }, // Yellow
-            { color: '#2ecc71', hp: 1, score: 10 }, // Green
-            { color: '#3498db', hp: 1, score: 10 }, // Blue
-            { color: '#9b59b6', hp: 1, score: 10 }  // Purple
+        // Define Brick Types (Map ID -> Config)
+        // 0 = Empty
+        const brickTypes = [
+            null, // 0 is empty
+            { color: '#c0392b', hp: 3, score: 50 }, // 1: Red
+            { color: '#e67e22', hp: 2, score: 30 }, // 2: Orange
+            { color: '#f1c40f', hp: 1, score: 20 }, // 3: Yellow
+            { color: '#2ecc71', hp: 1, score: 10 }, // 4: Green
+            { color: '#3498db', hp: 1, score: 10 }, // 5: Blue
+            { color: '#9b59b6', hp: 1, score: 10 }  // 6: Purple
         ];
 
         for (let r = 0; r < rows; r++) {
-            const type = rowTypes[r % rowTypes.length];
             for (let c = 0; c < cols; c++) {
+                const typeId = map[r][c];
+                if (typeId === 0) continue;
+
+                const type = brickTypes[typeId];
+                if (!type) continue; // Skip invalid IDs
+
                 this.bricks.push({
                     x: padding + c * (brickWidth + padding),
                     y: padding + 50 + r * (brickHeight + padding),
@@ -431,6 +444,7 @@ export class CosmicBreaker {
 
     levelComplete() {
         this.playSound('levelup');
+        this.currentLevel++; // Advance level
         this.resetBall();
         this.createLevel();
         // Maybe increase base speed?
@@ -544,6 +558,13 @@ export class CosmicBreaker {
 
         this.ctx.textAlign = 'right';
         this.ctx.fillText(`LIVES: ${this.lives}`, this.width - 20, 30);
+
+        // Level Name
+        this.ctx.textAlign = 'center';
+        this.ctx.font = '14px "Courier New"';
+        this.ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        const levelName = Levels[this.currentLevel % Levels.length].name;
+        this.ctx.fillText(`LEVEL ${this.currentLevel + 1}: ${levelName}`, this.width / 2, 50);
 
         // "Click to Start" Hint
         // "Click to Start" Hint
