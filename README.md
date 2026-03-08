@@ -1,86 +1,63 @@
 # Web Games Arcade
 
-A collection of web-based arcade and creational games built with modern web technologies. This project features a modular "Hub-and-Spoke" architecture where a shared core engine powers multiple distinct game experiences.
+A collection of browser-based games built with vanilla JavaScript and HTML5 Canvas. Neon-retro aesthetic, no frameworks, minimal dependencies.
 
-## 🎮 Vision
-To create a "virtual console" feel where users can select from a variety of arcade-style (action) and creational (generative/puzzle) games. The focus is on:
-*   **Aesthetics**: Neon, glowing, premium UI.
-*   **Performance**: Vanilla JS + Canvas/WebGL.
-*   **Modularity**: Easy to add new "cartridges" (games).
+## Games
 
-## 🕹️ Available Games
+| Game | Genre | Status |
+|---|---|---|
+| **Neon Flow** | Puzzle / Routing | ✅ v1.0 |
+| **Cosmic Breaker** | Breakout / Arcade | ✅ v1.0 |
+| **Orbit** | Physics / Survival | ✅ v1.0 |
+| **Asteroids** | Shooter / Arcade | ✅ v1.0 |
+| **Neon Blocks** | Tetris / Puzzle | 🚧 In Progress |
+| **Elemental Sandbox** | Falling Sand / Sim | 🔴 Not Started |
 
-### 1. Cosmic Breaker
-> *Arcade Breakout with a Twist*
-A polished brick-breaking game featuring multi-ball madness, power-ups, screen shake, and 5 unique levels. Use the "English" mechanic to control ball trajectory.
+## Tech Stack
 
-### 2. Neon Flow
-> *Chill Puzzle Logic*
-Connect emitters to receivers by rotating pipes. Mix primary colors (Red, Green, Blue) to create new ones (Magenta, Yellow, Cyan) and complete the circuit. Features glowing visuals and procedural tones.
+- **Vanilla JS** (ES modules, no frameworks)
+- **HTML5 Canvas** for rendering
+- **Vite** for dev server and build
+- Custom shared engine: GameLoop, InputManager, AudioManager, Vector2, StorageManager
 
-### 3. Orbit
-> *Gravity Defense*
-A tense physics survival game. You play as a stylized Sun. Use a slingshot mechanic to launch projectiles, deflect diving comets, and maintain planetary orbits. Features N-body gravity simulation and bullet time.
+## Architecture
 
-### 4. Asteroids
-> *Neon Vector Shooter*
-A modern, neon-soaked take on the arcade classic. Pilot a ship with inertial physics, blast asteroids that split into smaller chunks, and survive infinite waves. Features screen wrapping, particle explosions, and increasing difficulty.
+Hub-and-Spoke monorepo. A shared `core/` engine powers individual game modules under `src/games/`.
 
-## 🏗️ Architecture
-The project uses a **Hub-and-Spoke** architecture:
-
-*   **`src/core/`**: The shared game engine. Handles common tasks so individual games don't have to.
-    *   `GameLoop.js`: Manages the requestAnimationFrame loop and delta time.
-    *   `InputManager.js`: Normalizes keyboard, mouse, and touch input.
-    *   `AudioManager.js`: Wraps the Web Audio API for sound effects and music.
-    *   `StorageManager.js`: Handles data persistence (High Scores, Settings). *Currently using LocalStorage (MVP).*
-    *   `Vector2.js`: Common math utility for 2D physics/movement.
-*   **`src/ui/`**: Reusable UI components (Buttons, Overlays) to maintain a consistent "Arcade" theme across all games.
-*   **`src/games/`**: Each game lives in its own isolated folder here.
-
-### Folder Structure
-```text
-webGames/
-├── index.html              # The "Arcade Lobby" (Game Selection Menu)
-├── package.json            # Dependencies and scripts
-├── public/                 # Static assets
-└── src/
-    ├── main.js             # Entry point for the Lobby
-    ├── style.css           # Global "Arcade" theme
-    ├── core/               # Shared Engine
-    ├── ui/                 # Shared UI
-    └── games/              # Individual Game Modules
+```
+src/
+├── core/           # Shared engine (GameLoop, Input, Audio, Vector2, Storage)
+├── ui/             # Shared components (Button, Overlay)
+└── games/          # Game modules
+    ├── asteroids/
+    ├── cosmic-breaker/
+    ├── neon-blocks/
+    ├── neon-flow/
+    └── orbit/
 ```
 
-## 💾 Persistence strategy
-**Current Status: MVP (Tier 1)**
-*   Data is saved to the browser's `localStorage`.
-*   Includes: High Scores, Unlockables, Settings.
+Each game implements a standard interface (`init`, `destroy`, `resize`) for lobby load/unload.
 
-**Future Roadmap (Tier 2)**
-*   Integration with a backend (e.g., Supabase/Firebase) for global leaderboards.
+See [architecture.md](architecture.md) for full details and [games.md](games.md) for game specs.
 
-## 🚀 Getting Started
+## Development
 
-### Prerequisites
-*   Node.js installed.
+```bash
+npm install
+npm run dev       # Start dev server (hot reload)
+npm run build     # Production build → dist/
+npm run preview   # Preview production build
+```
 
-### Setup
-1.  Install dependencies:
-    ```bash
-    npm install
-    ```
+## Prerequisites
 
-2.  Start the development server:
-    ```bash
-    npm run dev
-    ```
+- Node.js 18+
+- npm
 
-3.  Open your browser to the local URL provided (usually `http://localhost:5173`).
+## Contributing
 
-## 🛠️ Tech Stack
-*   **Vite**: Build tool and dev server.
-*   **Vanilla JavaScript**: Core logic.
-*   **HTML5 Canvas**: High-performance 2D rendering.
-*   **Custom Arcade Physics**: Tailored physics engines for specific game feels (e.g., Breakout mechanics).
-*   **CSS3**: UI and effects.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+Private repository. All rights reserved.
