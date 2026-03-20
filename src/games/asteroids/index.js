@@ -1,5 +1,6 @@
 import { GameLoop } from '../../core/GameLoop.js';
 import { AudioManager } from '../../core/AudioManager.js';
+import { StorageManager } from '../../core/StorageManager.js';
 import { Vector2 } from '../../core/Vector2.js';
 import { Ship, Asteroid, Bullet, Particle } from './Entities.js';
 
@@ -8,6 +9,7 @@ export class Asteroids {
         this.container = canvasContainer;
         this.onGameOver = onGameOver;
         this.audio = new AudioManager();
+        this.storage = new StorageManager();
 
         this.canvas = document.createElement('canvas');
         this.canvas.width = 800;
@@ -17,38 +19,80 @@ export class Asteroids {
 
         this.width = this.canvas.width;
         this.height = this.canvas.height;
+        this.highScore = this.storage.getHighScore('asteroids');
     }
 
     init() {
-        console.log('Asteroids Initialized');
-
         this.score = 0;
         this.lives = 3;
         this.gameOver = false;
+        this.paused = false;
 
         this.entities = [];
-        this.asteroids = []; // Track explicitly for wave logic
+        this.asteroids = [];
 
-        // Spawn Ship
         this.spawnShip();
-
-        // Spawn Wave 1
         this.nextWave(3);
 
-        // Input
         this.keys = {};
         this.binds = {
-            down: e => this.keys[e.code] = true,
+            down: e => {
+                if (e.code === 'Escape') {
+                    this.paused = !this.paused;
+                    return;
+                }
+                this.keys[e.code] = true;
+            },
             up: e => this.keys[e.code] = false
         };
         window.addEventListener('keydown', this.binds.down);
         window.addEventListener('keyup', this.binds.up);
+
+        // Touch controls
+        this.touchState = { left: false, right: false, thrust: false, fire: false };
+        this.setupTouchControls();
 
         this.loop = new GameLoop(
             (dt) => this.update(dt),
             () => this.render()
         );
         this.loop.start();
+    }
+
+    setupTouchControls() {
+        this.touchRegions = [];
+        this.handleTouchStart = (e) => {
+            e.preventDefault();
+            this.processTouches(e.touches);
+        };
+        this.handleTouchMove = (e) => {
+            e.preventDefault();
+            this.processTouches(e.touches);
+        };
+        this.handleTouchEnd = (e) => {
+            e.preventDefault();
+            this.processTouches(e.touches);
+        };
+
+        this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+        this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+        this.canvas.addEventListener('touchend', this.handleTouchEnd, { passive: false });
+    }
+
+    processTouches(touches) {
+        this.touchState = { left: false, right: false, thrust: false, fire: false };
+        const rect = this.canvas.getBoundingClientRect();
+
+        for (let i = 0; i < touches.length; i++) {
+            const tx = (touches[i].clientX - rect.left) / rect.width;
+            const ty = (touches[i].clientY - rect.top) / rect.height;
+
+            // Left side = rotate left/right, right side = thrust/fire
+            if (tx < 0.33) this.touchState.left = true;
+            else if (tx > 0.66) this.touchState.fire = true;
+            else if (ty < 0.5) this.touchState.thrust = true;
+            else this.touchState.right = true;
+        }
     }
 
     nextWave(count) {
@@ -65,7 +109,6 @@ export class Asteroids {
 
     spawnAsteroid(x, y, size = 3) {
         if (!x) {
-            // Random spawn logic
             do {
                 x = Math.random() * this.width;
                 y = Math.random() * this.height;
@@ -87,41 +130,41 @@ export class Asteroids {
         this.canvas.remove();
         window.removeEventListener('keydown', this.binds.down);
         window.removeEventListener('keyup', this.binds.up);
+        this.canvas.removeEventListener('touchstart', this.handleTouchStart);
+        this.canvas.removeEventListener('touchmove', this.handleTouchMove);
+        this.canvas.removeEventListener('touchend', this.handleTouchEnd);
     }
 
     update(dt) {
         if (this.gameOver && this.keys['KeyR']) {
-            this.stop(); // Clean up listeners
-            this.init(); // Restart
+            this.stop();
+            this.init();
             return;
         }
-        if (this.gameOver) return;
+        if (this.gameOver || this.paused) return;
 
-        // Ship Control
         if (this.ship && !this.ship.toBeRemoved) {
             const rotSpeed = 4;
-            if (this.keys['ArrowLeft']) this.ship.rotation -= rotSpeed * dt;
-            if (this.keys['ArrowRight']) this.ship.rotation += rotSpeed * dt;
+            if (this.keys['ArrowLeft'] || this.touchState.left) this.ship.rotation -= rotSpeed * dt;
+            if (this.keys['ArrowRight'] || this.touchState.right) this.ship.rotation += rotSpeed * dt;
 
-            if (this.keys['ArrowUp']) {
+            if (this.keys['ArrowUp'] || this.touchState.thrust) {
                 const thrust = 200;
                 const force = new Vector2(Math.cos(this.ship.rotation), Math.sin(this.ship.rotation)).scale(thrust * dt);
                 this.ship.vel.add(force);
-                // Thrust particles
                 if (Math.random() > 0.5) {
                     const offset = new Vector2(Math.cos(this.ship.rotation), Math.sin(this.ship.rotation)).scale(-15);
                     this.spawnParticles(this.ship.pos.x + offset.x, this.ship.pos.y + offset.y, '#0ff', 1);
                 }
             }
 
-            this.ship.vel.scale(0.99); // Drag
+            this.ship.vel.scale(0.99);
 
-            if (this.keys['Space'] && !this.shootCooldown) {
+            if ((this.keys['Space'] || this.touchState.fire) && !this.shootCooldown) {
                 this.shoot();
                 this.shootCooldown = 0.2;
             }
         } else if (this.lives > 0 && !this.respawnTimer) {
-            // Respawn logic
             this.respawnTimer = 2.0;
         }
 
@@ -135,11 +178,9 @@ export class Asteroids {
 
         if (this.shootCooldown > 0) this.shootCooldown -= dt;
 
-        // Update Entities & Collisions
         const asteroids = [];
         const bullets = [];
 
-        // 1. Update & Wrap
         for (let i = this.entities.length - 1; i >= 0; i--) {
             const e = this.entities[i];
             e.update(dt);
@@ -154,8 +195,6 @@ export class Asteroids {
             if (e instanceof Bullet) bullets.push(e);
         }
 
-        // 2. Collisions
-        // Bullet vs Asteroid
         for (const b of bullets) {
             for (const a of asteroids) {
                 if (b.pos.distSq(a.pos) < (b.radius + a.radius) ** 2) {
@@ -166,7 +205,6 @@ export class Asteroids {
             }
         }
 
-        // Ship vs Asteroid
         if (this.ship && !this.ship.toBeRemoved) {
             for (const a of asteroids) {
                 if (this.ship.pos.distSq(a.pos) < (this.ship.radius + a.radius) ** 2) {
@@ -176,9 +214,7 @@ export class Asteroids {
             }
         }
 
-        // Check Wave
         if (asteroids.length === 0 && this.lives > 0 && !this.gameOver) {
-            // Delay slightly so it doesn't pop instantly
             if (!this.waveDelay) this.waveDelay = 1.0;
             this.waveDelay -= dt;
             if (this.waveDelay <= 0) {
@@ -225,23 +261,56 @@ export class Asteroids {
 
         if (this.lives <= 0) {
             this.gameOver = true;
+            this.storage.saveHighScore('asteroids', this.score);
+            if (this.onGameOver) this.onGameOver();
         }
     }
 
     render() {
-        // Clear
         this.ctx.fillStyle = '#050505';
         this.ctx.fillRect(0, 0, this.width, this.height);
 
-        // Render Entities
         this.entities.forEach(e => e.render(this.ctx));
+
+        // Touch control hints
+        if ('ontouchstart' in window) {
+            this.ctx.globalAlpha = 0.15;
+            this.ctx.strokeStyle = '#fff';
+            this.ctx.lineWidth = 1;
+            // Left region
+            this.ctx.strokeRect(0, 0, this.width * 0.33, this.height);
+            // Right region
+            this.ctx.strokeRect(this.width * 0.66, 0, this.width * 0.34, this.height);
+            this.ctx.globalAlpha = 0.1;
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '14px monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText('ROTATE L', this.width * 0.165, this.height - 20);
+            this.ctx.fillText('THRUST/R', this.width * 0.5, this.height - 20);
+            this.ctx.fillText('FIRE', this.width * 0.83, this.height - 20);
+            this.ctx.globalAlpha = 1.0;
+        }
 
         // UI
         this.ctx.fillStyle = '#fff';
         this.ctx.font = '20px monospace';
         this.ctx.textAlign = 'left';
         this.ctx.fillText(`SCORE: ${this.score}`, 20, 30);
-        this.ctx.fillText(`LIVES: ${this.lives}`, 20, 60);
+        this.ctx.fillText(`HI: ${Math.max(this.score, this.highScore)}`, 20, 55);
+        this.ctx.fillText(`LIVES: ${this.lives}`, 20, 80);
+
+        // Pause
+        if (this.paused) {
+            this.ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+            this.ctx.fillStyle = '#00f3ff';
+            this.ctx.font = '40px monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText('PAUSED', this.width / 2, this.height / 2);
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '16px monospace';
+            this.ctx.fillText('Press ESC to resume', this.width / 2, this.height / 2 + 40);
+        }
 
         if (this.gameOver) {
             this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
@@ -250,11 +319,16 @@ export class Asteroids {
             this.ctx.font = '40px monospace';
             this.ctx.textAlign = 'center';
             this.ctx.fillText('MISSION FAILED', this.width / 2, this.height / 2);
-
             this.ctx.fillStyle = '#fff';
             this.ctx.font = '20px monospace';
             this.ctx.fillText(`Final Score: ${this.score}`, this.width / 2, this.height / 2 + 40);
-            this.ctx.fillText('Press R to Restart', this.width / 2, this.height / 2 + 80);
+            if (this.score >= this.highScore && this.score > 0) {
+                this.ctx.fillStyle = '#ff0';
+                this.ctx.fillText('NEW HIGH SCORE!', this.width / 2, this.height / 2 + 70);
+            }
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '16px monospace';
+            this.ctx.fillText('Press R to Restart', this.width / 2, this.height / 2 + 105);
         }
     }
 }

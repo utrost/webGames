@@ -10,8 +10,8 @@ A collection of browser-based games built with vanilla JavaScript and HTML5 Canv
 | **Cosmic Breaker** | Breakout / Arcade | ✅ v1.0 |
 | **Orbit** | Physics / Survival | ✅ v1.0 |
 | **Asteroids** | Shooter / Arcade | ✅ v1.0 |
-| **Neon Blocks** | Tetris / Puzzle | 🚧 In Progress |
-| **Elemental Sandbox** | Falling Sand / Sim | 🔴 Not Started |
+| **Neon Blocks** | Tetris / Puzzle | ✅ v1.0 |
+| **Elemental Sandbox** | Falling Sand / Sim | ✅ v1.0 |
 
 ## Tech Stack
 
