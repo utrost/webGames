@@ -8,10 +8,10 @@ This document tracks the current implementation status of all games in the Web G
 | :--- | :--- | :--- | :--- |
 | **Neon Flow** | Puzzle / Creational | Canvas |  Release v1.0 |
 | **Cosmic Breaker** | Arcade / Action | Custom Arcade Physics | 🟢 Release v1.0 |
-| **Elemental Sandbox** | Simulation / Creational | Canvas | 🔴 Not Started |
+| **Elemental Sandbox** | Simulation / Creational | Canvas | 🟢 Release v1.0 |
 | **Orbit** | Arcade / Skill | Canvas | 🟢 Release v1.0 |
 | **Asteroids** | Arcade / Shooter | Canvas | 🟢 Release v1.0 |
-| **Neon Blocks** | Puzzle / Arcade | Canvas | 🔴 Not Started |
+| **Neon Blocks** | Puzzle / Arcade | Canvas | 🟢 Release v1.0 |
 
 ---
 
@@ -84,7 +84,7 @@ This document tracks the current implementation status of all games in the Web G
 
 ## 6. Neon Blocks (Tetris)
 *   **Genre**: Puzzle / Arcade
-*   **Status**: 🔴 Not Started
+*   **Status**: 🟢 Released v1.0
 *   **Concept**: A high-speed, glowing block stacker.
 *   **Key Features**:
     *   Classic 10x20 Grid.

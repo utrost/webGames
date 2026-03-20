@@ -1,4 +1,6 @@
 export class AudioManager {
+    static masterVolume = 1.0;
+
     constructor() {
         this.context = new (window.AudioContext || window.webkitAudioContext)();
         this.sounds = {};
@@ -14,18 +16,25 @@ export class AudioManager {
         if (!this.sounds[name]) return;
         const source = this.context.createBufferSource();
         source.buffer = this.sounds[name];
-        source.connect(this.context.destination);
+
+        const gain = this.context.createGain();
+        gain.gain.setValueAtTime(AudioManager.masterVolume, this.context.currentTime);
+        source.connect(gain);
+        gain.connect(this.context.destination);
         source.start(0);
     }
 
     playTone(frequency, type = 'sine', duration = 0.1) {
+        if (AudioManager.masterVolume === 0) return;
+
         const osc = this.context.createOscillator();
         const gain = this.context.createGain();
 
         osc.type = type;
         osc.frequency.setValueAtTime(frequency, this.context.currentTime);
 
-        gain.gain.setValueAtTime(0.1, this.context.currentTime);
+        const vol = 0.1 * AudioManager.masterVolume;
+        gain.gain.setValueAtTime(vol, this.context.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + duration);
 
         osc.connect(gain);
