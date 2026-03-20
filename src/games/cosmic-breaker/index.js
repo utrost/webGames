@@ -2,6 +2,7 @@ import { Vector2 } from '../../core/Vector2.js';
 import { GameLoop } from '../../core/GameLoop.js';
 import { AudioManager } from '../../core/AudioManager.js';
 import { StorageManager } from '../../core/StorageManager.js';
+import { CanvasScaler } from '../../core/CanvasScaler.js';
 import { Levels } from './levels.js';
 
 export class CosmicBreaker {
@@ -20,6 +21,7 @@ export class CosmicBreaker {
 
         this.width = this.canvas.width;
         this.height = this.canvas.height;
+        this.scaler = new CanvasScaler(this.canvas, this.width, this.height);
         this.isRunning = false;
         this.paused = false;
         this.score = 0;
@@ -113,6 +115,7 @@ export class CosmicBreaker {
 
     stop() {
         this.loop.stop();
+        this.scaler.destroy();
         this.isRunning = false;
         window.removeEventListener('mousemove', this.inputHandler);
         window.removeEventListener('click', this.clickHandler);

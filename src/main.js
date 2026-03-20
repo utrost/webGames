@@ -7,14 +7,28 @@ import { NeonBlocks } from './games/neon-blocks/index.js';
 import { ElementalSandbox } from './games/elemental-sandbox/index.js';
 import { StorageManager } from './core/StorageManager.js';
 import { AudioManager } from './core/AudioManager.js';
+import { StatsTracker } from './core/StatsTracker.js';
+import { PerfMonitor } from './core/PerfMonitor.js';
 
 const storage = new StorageManager();
+const stats = new StatsTracker();
+const perfMonitor = new PerfMonitor();
 const gameContainer = document.getElementById('game-container');
 let activeGame = null;
 let backBtn = null;
 
-// Shared audio for volume control
-const globalAudio = new AudioManager();
+// Register service worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+// FPS toggle with F3
+window.addEventListener('keydown', (e) => {
+    if (e.code === 'F3') {
+        e.preventDefault();
+        perfMonitor.toggle();
+    }
+});
 
 const games = [
     { id: 'cosmic-breaker', title: 'Cosmic Breaker', description: 'Physics-based breakout action!', class: CosmicBreaker },
@@ -144,6 +158,10 @@ function toggleSettings() {
                 </div>`;
             }).join('');
 
+            const colorBlind = localStorage.getItem('webGames_colorblind') === 'true';
+            const totalStats = stats.getStats();
+            const minutesPlayed = Math.round(totalStats.totalTimePlayed / 60);
+
             panel.innerHTML = `
                 <h2>SETTINGS</h2>
                 <div class="setting-row">
@@ -153,6 +171,16 @@ function toggleSettings() {
                 </div>
                 <div class="setting-row">
                     <button id="mute-btn" class="setting-btn">${getVolume() === 0 ? 'UNMUTE' : 'MUTE'}</button>
+                </div>
+                <div class="setting-row">
+                    <label>Color-blind</label>
+                    <button id="colorblind-btn" class="setting-btn">${colorBlind ? 'ON' : 'OFF'}</button>
+                </div>
+                <h3>STATISTICS</h3>
+                <div class="stats-display">
+                    <p>Games Played: ${totalStats.totalGamesPlayed}</p>
+                    <p>Time Played: ${minutesPlayed} min</p>
+                    <p style="color:#888;font-size:0.8rem;">Press F3 in-game for FPS counter</p>
                 </div>
                 <h3>ACHIEVEMENTS</h3>
                 <div class="achievements-list">${achievementHTML}</div>
@@ -174,6 +202,12 @@ function toggleSettings() {
                 document.getElementById('volume-slider').value = newVol;
                 document.getElementById('volume-label').textContent = `${Math.round(newVol * 100)}%`;
                 document.getElementById('mute-btn').textContent = newVol === 0 ? 'UNMUTE' : 'MUTE';
+            });
+
+            document.getElementById('colorblind-btn').addEventListener('click', () => {
+                const current = localStorage.getItem('webGames_colorblind') === 'true';
+                localStorage.setItem('webGames_colorblind', (!current).toString());
+                document.getElementById('colorblind-btn').textContent = !current ? 'ON' : 'OFF';
             });
 
             document.getElementById('close-settings').addEventListener('click', toggleSettings);
@@ -207,14 +241,26 @@ function loadGame(gameConfig) {
     backBtn.onclick = returnToLobby;
     document.body.appendChild(backBtn);
 
-    activeGame = new gameConfig.class(canvasContainer, () => {
-        // Game over callback — check achievements
-        checkAchievements();
-    });
-    activeGame.init();
+    try {
+        activeGame = new gameConfig.class(canvasContainer, () => {
+            // Game over callback — check achievements
+            stats.endSession();
+            checkAchievements();
+        });
+        activeGame.init();
+        stats.startSession(gameConfig.id);
+    } catch (err) {
+        console.error(`Failed to initialize ${gameConfig.title}:`, err);
+        canvasContainer.innerHTML = `<div style="color:#f00;text-align:center;padding:40px;font-family:monospace;">
+            <h2>SYSTEM ERROR</h2>
+            <p>${gameConfig.title} failed to initialize.</p>
+            <p style="color:#888;font-size:0.8rem;">${err.message}</p>
+        </div>`;
+    }
 }
 
 function returnToLobby() {
+    stats.endSession();
     if (activeGame) {
         activeGame.stop();
         activeGame = null;

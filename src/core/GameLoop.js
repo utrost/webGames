@@ -1,4 +1,5 @@
 export class GameLoop {
+    /** @param {(dt: number) => void} update @param {() => void} render */
     constructor(update, render) {
         this.update = update;
         this.render = render;

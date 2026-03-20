@@ -1,3 +1,4 @@
+/** Web Audio API manager for tone synthesis and sound playback. */
 export class AudioManager {
     static masterVolume = 1.0;
 
@@ -24,6 +25,7 @@ export class AudioManager {
         source.start(0);
     }
 
+    /** @param {number} frequency @param {OscillatorType} [type='sine'] @param {number} [duration=0.1] */
     playTone(frequency, type = 'sine', duration = 0.1) {
         if (AudioManager.masterVolume === 0) return;
 
