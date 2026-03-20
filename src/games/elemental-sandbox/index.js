@@ -1,5 +1,6 @@
 import { GameLoop } from '../../core/GameLoop.js';
 import { AudioManager } from '../../core/AudioManager.js';
+import { CanvasScaler } from '../../core/CanvasScaler.js';
 import { Simulation } from './Simulation.js';
 import { ELEMENTS, ELEMENT_INFO } from './Elements.js';
 
@@ -24,6 +25,7 @@ export class ElementalSandbox {
         this.canvas.style.margin = '0 auto';
         this.canvas.style.cursor = 'crosshair';
         this.canvas.style.imageRendering = 'pixelated';
+        this.scaler = new CanvasScaler(this.canvas, this.canvas.width, this.canvas.height);
 
         // Off-screen buffer for pixel manipulation
         this.imageData = this.ctx.createImageData(this.simWidth, this.simHeight);
@@ -316,6 +318,7 @@ export class ElementalSandbox {
 
     stop() {
         this.loop.stop();
+        this.scaler.destroy();
         this.canvas.remove();
         if (this.uiPanel) this.uiPanel.remove();
         this.canvas.removeEventListener('mousedown', this.handleMouseDown);

@@ -1,6 +1,7 @@
 import { GameLoop } from '../../core/GameLoop.js';
 import { AudioManager } from '../../core/AudioManager.js';
 import { StorageManager } from '../../core/StorageManager.js';
+import { CanvasScaler } from '../../core/CanvasScaler.js';
 import { Grid, TILE_TYPES, PIPE_SHAPES } from './Logic.js';
 import { Levels } from './levels.js';
 
@@ -20,6 +21,7 @@ export class NeonFlow {
 
         this.width = this.canvas.width;
         this.height = this.canvas.height;
+        this.scaler = new CanvasScaler(this.canvas, this.width, this.height);
         this.isRunning = false;
         this.paused = false;
         this.currentLevelIndex = 0;
@@ -27,6 +29,17 @@ export class NeonFlow {
         this.totalMoves = 0;
 
         this.tileSize = 60;
+        this.colorBlind = localStorage.getItem('webGames_colorblind') === 'true';
+
+        // Color-blind symbols for each primary/secondary color
+        this.cbSymbols = {
+            '#f00': 'R', '#00f': 'B', '#0f0': 'G',
+            '#f0f': 'M', '#ff0': 'Y', '#0ff': 'C', '#fff': 'W'
+        };
+        this.cbPatterns = {
+            '#f00': 'diagonal', '#00f': 'dots', '#0f0': 'horizontal',
+            '#f0f': 'cross', '#ff0': 'vertical', '#0ff': 'zigzag', '#fff': 'solid'
+        };
 
         this.mouseX = 0;
         this.mouseY = 0;
@@ -100,6 +113,7 @@ export class NeonFlow {
 
     stop() {
         this.loop.stop();
+        this.scaler.destroy();
         this.isRunning = false;
         window.removeEventListener('mousemove', this.inputHandler);
         window.removeEventListener('click', this.clickHandler);
@@ -173,6 +187,7 @@ export class NeonFlow {
                     this.ctx.arc(0, 0, 14, 0, Math.PI * 2);
                     this.ctx.stroke();
                     this.ctx.shadowBlur = 0;
+                    this.drawColorBlindIndicator(tile.color, 0, 20, 10);
                 } else if (tile.type === TILE_TYPES.SINK) {
                     const isSatisfied = this.grid.colorsMatch(tile.activeColors, tile.color);
                     this.ctx.lineWidth = 3;
@@ -199,6 +214,7 @@ export class NeonFlow {
                         this.ctx.globalAlpha = 1.0;
                     }
                     this.ctx.shadowBlur = 0;
+                    this.drawColorBlindIndicator(tile.color, 0, 20, 10);
                 }
                 if (tile.type === TILE_TYPES.PIPE) {
                     this.ctx.strokeStyle = '#333';
@@ -296,6 +312,20 @@ export class NeonFlow {
         if (hasRed && hasGreen) return '#ff0';
         if (hasBlue && hasGreen) return '#0ff';
         return '#fff';
+    }
+
+    drawColorBlindIndicator(color, x, y, size) {
+        if (!this.colorBlind) return;
+        const symbol = this.cbSymbols[color];
+        if (!symbol) return;
+
+        this.ctx.save();
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = `bold ${size}px monospace`;
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(symbol, x, y);
+        this.ctx.restore();
     }
 
     onClick() {

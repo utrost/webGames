@@ -1,6 +1,9 @@
-// Mutable 2D vector class. All operations modify `this` and return `this` for chaining.
-// Use .clone() before mutating if you need to preserve the original.
+/**
+ * Mutable 2D vector class. All operations modify `this` and return `this` for chaining.
+ * Use .clone() before mutating if you need to preserve the original.
+ */
 export class Vector2 {
+    /** @param {number} [x=0] @param {number} [y=0] */
     constructor(x = 0, y = 0) {
         this.x = x;
         this.y = y;

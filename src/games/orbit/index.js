@@ -1,6 +1,7 @@
 import { GameLoop } from '../../core/GameLoop.js';
 import { AudioManager } from '../../core/AudioManager.js';
 import { StorageManager } from '../../core/StorageManager.js';
+import { CanvasScaler } from '../../core/CanvasScaler.js';
 import { Physics } from './Physics.js';
 import { Sun, Planet, Comet, Projectile } from './Entities.js';
 import { Vector2 } from '../../core/Vector2.js';
@@ -20,6 +21,7 @@ export class Orbit {
 
         this.width = this.canvas.width;
         this.height = this.canvas.height;
+        this.scaler = new CanvasScaler(this.canvas, this.width, this.height);
         this.physics = new Physics();
         this.bodies = [];
         this.paused = false;
@@ -246,6 +248,7 @@ export class Orbit {
 
     stop() {
         this.loop.stop();
+        this.scaler.destroy();
         this.canvas.remove();
         this.canvas.removeEventListener('mousedown', this.handleDown);
         window.removeEventListener('mousemove', this.handleMove);

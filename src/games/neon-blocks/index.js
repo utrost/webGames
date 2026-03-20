@@ -1,6 +1,7 @@
 import { GameLoop } from '../../core/GameLoop.js';
 import { AudioManager } from '../../core/AudioManager.js';
 import { StorageManager } from '../../core/StorageManager.js';
+import { CanvasScaler } from '../../core/CanvasScaler.js';
 import { SHAPES } from './Shapes.js';
 
 export class NeonBlocks {
@@ -28,6 +29,7 @@ export class NeonBlocks {
         this.blockSize = 30;
         this.gameWidth = 300;
 
+        this.scaler = new CanvasScaler(this.canvas, this.canvas.width, this.canvas.height);
         this.highScore = this.storage.getHighScore('neon-blocks');
     }
 
@@ -278,6 +280,7 @@ export class NeonBlocks {
 
     stop() {
         this.loop.stop();
+        this.scaler.destroy();
         this.canvas.remove();
         window.removeEventListener('keydown', this.handleKey);
         this.canvas.removeEventListener('touchstart', this.handleTouchStart);

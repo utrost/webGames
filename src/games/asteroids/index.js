@@ -1,6 +1,7 @@
 import { GameLoop } from '../../core/GameLoop.js';
 import { AudioManager } from '../../core/AudioManager.js';
 import { StorageManager } from '../../core/StorageManager.js';
+import { CanvasScaler } from '../../core/CanvasScaler.js';
 import { Vector2 } from '../../core/Vector2.js';
 import { Ship, Asteroid, Bullet, Particle } from './Entities.js';
 
@@ -19,6 +20,7 @@ export class Asteroids {
 
         this.width = this.canvas.width;
         this.height = this.canvas.height;
+        this.scaler = new CanvasScaler(this.canvas, this.width, this.height);
         this.highScore = this.storage.getHighScore('asteroids');
     }
 
@@ -127,6 +129,7 @@ export class Asteroids {
 
     stop() {
         this.loop.stop();
+        this.scaler.destroy();
         this.canvas.remove();
         window.removeEventListener('keydown', this.binds.down);
         window.removeEventListener('keyup', this.binds.up);
