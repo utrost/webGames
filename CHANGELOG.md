@@ -7,6 +7,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- Comprehensive test suite: 162 tests across 13 test files
+  - Core engine tests: GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker
+  - Game logic tests: Asteroids Entities, Cosmic Breaker levels/config, Neon Blocks Shapes, Orbit Physics/Entities, Elemental Sandbox Simulation/Elements
+- Testing section in README with full test coverage table
+- Testing guide in architecture.md with mocking patterns
+- Testing conventions in CONTRIBUTING.md
+
+### Previously Added
 - **Elemental Sandbox** v1.0 — falling sand simulation with 9 elements (Sand, Water, Fire, Oil, Acid, Plant, Wood, Stone) and emergent interactions
 - **Neon Blocks** v1.0 — complete Tetris clone with next-piece preview, level progression, high score persistence
 - Pause system (ESC key) across all games

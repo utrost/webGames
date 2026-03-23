@@ -8,15 +8,27 @@ The project uses a monolithic repo structure where a shared core powers individu
 
 ```text
 src/
-├── core/               # Shared Engine (Do not modify without review)
-│   ├── GameLoop.js     # Manages time steps (delta time)
-│   ├── InputManager.js # Normalized input (Mouse/Keyboard)
-│   ├── Vector2.js      # standard Math library
-│   └── StorageManager.js # Persistence layer
-├── ui/                 # Shared UI Components (Buttons, Overlays)
-└── games/              # Game Cartridges
-    ├── cosmic-breaker/ # Game A
-    └── neon-flow/      # Game B
+├── core/                    # Shared Engine (Do not modify without review)
+│   ├── GameLoop.js          # Manages time steps (delta time)
+│   ├── Vector2.js           # 2D math library (add, scale, rotate, normalize, dist, dot, angle)
+│   ├── InputManager.js      # Normalized input (Mouse/Keyboard)
+│   ├── GamepadManager.js    # Gamepad API support
+│   ├── AudioManager.js      # Web Audio API wrapper (tones + buffers)
+│   ├── StorageManager.js    # Persistence layer (high scores, settings)
+│   ├── ParticleSystem.js    # Emit, update, render particles
+│   ├── StateMachine.js      # State transitions with enter/exit callbacks
+│   ├── StatsTracker.js      # Session statistics and play time tracking
+│   ├── PerfMonitor.js       # FPS counter overlay
+│   ├── CanvasScaler.js      # Responsive canvas with DPI handling
+│   └── __tests__/           # Unit tests for core modules
+├── ui/                      # Shared UI Components (Buttons, Overlays)
+└── games/                   # Game Cartridges
+    ├── asteroids/           # Neon vector shooter
+    ├── cosmic-breaker/      # Breakout clone
+    ├── elemental-sandbox/   # Falling sand simulation
+    ├── neon-blocks/         # Tetris clone
+    ├── neon-flow/           # Pipe routing puzzle
+    └── orbit/               # Gravity physics survival
 ```
 
 ## 🧩 Game Interface
@@ -69,6 +81,31 @@ For arcade-style games (Breakout, Space Invaders), general-purpose engines like 
 
 *   **Audio**: Use `AudioManager` (Web Audio API wrapper) to prevent browser autoplay policies from blocking sound.
 *   **Images**: Preload assets in `init()` before starting the game loop if possible.
+
+## 🧪 Testing
+
+Unit tests use **Vitest** and live in `__tests__/` directories next to the modules they test.
+
+```bash
+npm test              # Run all tests
+npm run test:watch    # Watch mode
+```
+
+**What to test:**
+- Pure logic modules (physics, math, data structures, state machines)
+- Entity constructors and properties
+- Config/data validation (level definitions, shape matrices)
+- Storage and persistence behavior
+
+**What NOT to test:**
+- Canvas rendering (requires browser DOM)
+- Audio playback (requires Web Audio context)
+- Full game integration (requires browser environment)
+
+**Mocking patterns:**
+- `localStorage`: Create a mock object and assign to `globalThis.localStorage`
+- `requestAnimationFrame`: Use `vi.stubGlobal()` to provide a controlled callback queue
+- `Date.now()`: Use `vi.spyOn(Date, 'now')` for time-dependent tests
 
 ## 📝 Coding Standards
 
