@@ -61,7 +61,8 @@ export class CosmicBreaker {
             const rect = this.canvas.getBoundingClientRect();
             this.mouseX = (e.clientX - rect.left) * (this.width / rect.width);
         };
-        this.clickHandler = () => {
+        this.clickHandler = (e) => {
+            e.preventDefault();
             if (this.audio.context.state === 'suspended') {
                 this.audio.context.resume();
             }
@@ -91,13 +92,19 @@ export class CosmicBreaker {
 
     init() {
         window.addEventListener('mousemove', this.inputHandler);
-        this.canvas.addEventListener('click', this.clickHandler);
+        this.canvas.addEventListener('mousedown', this.clickHandler);
         this.canvas.addEventListener('touchmove', this.touchMoveHandler, { passive: false });
         this.canvas.addEventListener('touchstart', this.touchStartHandler, { passive: false });
 
         this.handleKey = (e) => {
             if (e.code === 'Escape') {
                 this.paused = !this.paused;
+            }
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (this.balls.some(b => !b.active)) {
+                    this.serveBall();
+                }
             }
         };
         window.addEventListener('keydown', this.handleKey);
@@ -118,7 +125,7 @@ export class CosmicBreaker {
         this.scaler.destroy();
         this.isRunning = false;
         window.removeEventListener('mousemove', this.inputHandler);
-        this.canvas.removeEventListener('click', this.clickHandler);
+        this.canvas.removeEventListener('mousedown', this.clickHandler);
         window.removeEventListener('keydown', this.handleKey);
         this.canvas.removeEventListener('touchmove', this.touchMoveHandler);
         this.canvas.removeEventListener('touchstart', this.touchStartHandler);
@@ -543,7 +550,7 @@ export class CosmicBreaker {
         if (this.balls.some(b => !b.active) && this.isRunning) {
             this.ctx.textAlign = 'center';
             this.ctx.fillStyle = 'rgba(255,255,255,0.5)';
-            this.ctx.fillText("CLICK TO LAUNCH", this.width / 2, this.height / 2 + 50);
+            this.ctx.fillText("CLICK or SPACE TO LAUNCH", this.width / 2, this.height / 2 + 50);
         }
 
         // Particles
