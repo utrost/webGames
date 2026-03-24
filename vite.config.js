@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
 
-export default defineConfig({
-  base: '/games/',
-});
+export default defineConfig(({ mode }) => ({
+  base: mode === 'ghpages' ? '/webGames/' : '/games/',
+}));
