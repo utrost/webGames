@@ -55,4 +55,30 @@ describe('StorageManager', () => {
         sm.saveHighScore('myGame', 42);
         expect(mockStorage['webGames_myGame_highscore']).toBe('42');
     });
+
+    it('returns 0 for corrupted high score data', () => {
+        mockStorage['webGames_bad_highscore'] = 'not-a-number';
+        expect(sm.getHighScore('bad')).toBe(0);
+    });
+
+    it('persists high scores across StorageManager instances', () => {
+        sm.saveHighScore('persist', 999);
+        const sm2 = new StorageManager();
+        expect(sm2.getHighScore('persist')).toBe(999);
+    });
+
+    it('handles localStorage errors gracefully on save', () => {
+        const origSet = localStorageMock.setItem;
+        localStorageMock.setItem = () => { throw new Error('QuotaExceededError'); };
+        expect(sm.saveHighScore('err', 100)).toBe(false);
+        localStorageMock.setItem = origSet;
+    });
+
+    it('handles localStorage errors gracefully on get', () => {
+        const origGet = localStorageMock.getItem;
+        localStorageMock.getItem = () => { throw new Error('SecurityError'); };
+        expect(sm.getHighScore('err')).toBe(0);
+        expect(sm.getSettings('err')).toBeNull();
+        localStorageMock.getItem = origGet;
+    });
 });

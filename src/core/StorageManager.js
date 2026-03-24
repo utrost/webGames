@@ -6,31 +6,44 @@ export class StorageManager {
 
     /** @param {string} gameId @param {number} score @returns {boolean} */
     saveHighScore(gameId, score) {
-        const key = `${this.prefix}${gameId}_highscore`;
         const currentHigh = this.getHighScore(gameId);
         if (score > currentHigh) {
-            localStorage.setItem(key, score);
-            return true; // New high score!
+            try {
+                localStorage.setItem(`${this.prefix}${gameId}_highscore`, score);
+            } catch {
+                return false;
+            }
+            return true;
         }
         return false;
     }
 
     /** @param {string} gameId @returns {number} */
     getHighScore(gameId) {
-        const key = `${this.prefix}${gameId}_highscore`;
-        return parseInt(localStorage.getItem(key) || '0', 10);
+        try {
+            const val = parseInt(localStorage.getItem(`${this.prefix}${gameId}_highscore`) || '0', 10);
+            return Number.isNaN(val) ? 0 : val;
+        } catch {
+            return 0;
+        }
     }
 
     /** @param {string} gameId @param {Object} settings */
     saveSettings(gameId, settings) {
-        const key = `${this.prefix}${gameId}_settings`;
-        localStorage.setItem(key, JSON.stringify(settings));
+        try {
+            localStorage.setItem(`${this.prefix}${gameId}_settings`, JSON.stringify(settings));
+        } catch {
+            // Storage unavailable — silently ignore
+        }
     }
 
     /** @param {string} gameId @returns {Object|null} */
     getSettings(gameId) {
-        const key = `${this.prefix}${gameId}_settings`;
-        const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : null;
+        try {
+            const data = localStorage.getItem(`${this.prefix}${gameId}_settings`);
+            return data ? JSON.parse(data) : null;
+        } catch {
+            return null;
+        }
     }
 }
