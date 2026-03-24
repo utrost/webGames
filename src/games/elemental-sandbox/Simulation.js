@@ -6,7 +6,7 @@ export class Simulation {
         this.height = height;
         this.grid = new Uint8Array(width * height);        // Element type
         this.colors = new Uint32Array(width * height);      // Packed RGBA color
-        this.updated = new Uint8Array(width * height);      // Frame update flag
+        this.updated = new Uint32Array(width * height);     // Frame update flag
         this.frame = 0;
     }
 

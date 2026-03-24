@@ -81,9 +81,8 @@ export class Physics {
     }
 
     handleCollision(a, b) {
-        // Define types cleanly? Or just use constructor names?
-        const typeA = a.constructor.name;
-        const typeB = b.constructor.name;
+        const typeA = a.type;
+        const typeB = b.type;
 
         // Helper to identify specific pair types
         const is = (t1, t2) => (typeA === t1 && typeB === t2) || (typeA === t2 && typeB === t1);

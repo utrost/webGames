@@ -94,6 +94,7 @@ export class NeonFlow {
     loadLevel(index) {
         if (index >= Levels.length) {
             this.storage.saveHighScore('neon-flow', this.totalMoves);
+            if (this.onGameOver) this.onGameOver();
             return;
         }
         const level = Levels[index % Levels.length];

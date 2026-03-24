@@ -169,19 +169,18 @@ export class Grid {
     }
 
     colorsMatch(activeSet, targetColor) {
-        // Normalizes primary colors
         const hasRed = activeSet.has('#f00');
         const hasBlue = activeSet.has('#00f');
         const hasGreen = activeSet.has('#0f0');
 
-        // Check target requirements
+        // Check target requires exactly the right primaries — no extras
         switch (targetColor) {
-            case '#f00': return hasRed;
-            case '#00f': return hasBlue;
-            case '#0f0': return hasGreen;
-            case '#f0f': return hasRed && hasBlue; // Magenta
-            case '#ff0': return hasRed && hasGreen; // Yellow
-            case '#0ff': return hasBlue && hasGreen; // Cyan
+            case '#f00': return hasRed && !hasBlue && !hasGreen;
+            case '#00f': return !hasRed && hasBlue && !hasGreen;
+            case '#0f0': return !hasRed && !hasBlue && hasGreen;
+            case '#f0f': return hasRed && hasBlue && !hasGreen; // Magenta
+            case '#ff0': return hasRed && !hasBlue && hasGreen; // Yellow
+            case '#0ff': return !hasRed && hasBlue && hasGreen; // Cyan
             case '#fff': return hasRed && hasBlue && hasGreen; // White
             default: return false;
         }

@@ -8,6 +8,7 @@ export class Body {
         this.mass = mass;
         this.radius = radius;
         this.color = color;
+        this.type = 'Body';
         this.isStatic = false;
         this.toBeRemoved = false;
     }
@@ -25,6 +26,7 @@ export class Body {
         copy.pos = this.pos.clone();
         copy.oldPos = this.oldPos.clone();
         copy.acc = this.acc.clone();
+        copy.type = this.type;
         copy.isStatic = this.isStatic;
         return copy;
     }
@@ -33,6 +35,7 @@ export class Body {
 export class Sun extends Body {
     constructor(x, y) {
         super(x, y, 10000, 30, '#ffffff'); // Massive, fixed
+        this.type = 'Sun';
         this.isStatic = true;
         this.hp = 100;
     }
@@ -41,18 +44,21 @@ export class Sun extends Body {
 export class Planet extends Body {
     constructor(x, y) {
         super(x, y, 10, 8, '#2ecc71'); // Green
+        this.type = 'Planet';
     }
 }
 
 export class Comet extends Body {
     constructor(x, y) {
         super(x, y, 5, 5, '#e74c3c'); // Red
+        this.type = 'Comet';
     }
 }
 
 export class Projectile extends Body {
     constructor(x, y) {
         super(x, y, 20, 4, '#ffffff'); // Dense, small
+        this.type = 'Projectile';
         this.life = 0;
     }
 }
