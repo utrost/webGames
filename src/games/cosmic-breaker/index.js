@@ -56,7 +56,10 @@ export class CosmicBreaker {
             color: '#00f3ff'
         };
 
-        this.mouseX = 0;
+        this.mouseX = this.width / 2;
+        this.gameOver = false;
+        this.keys = { left: false, right: false };
+
         this.inputHandler = (e) => {
             const rect = this.canvas.getBoundingClientRect();
             this.mouseX = (e.clientX - rect.left) * (this.width / rect.width);
@@ -91,23 +94,42 @@ export class CosmicBreaker {
     }
 
     init() {
+        this.gameOver = false;
+        this.keys = { left: false, right: false };
+        this.score = 0;
+        this.lives = 3;
+        this.currentLevel = 0;
+        this.mouseX = this.width / 2;
+        this.paddle.width = this.BASE_PADDLE_WIDTH;
+
         window.addEventListener('mousemove', this.inputHandler);
-        this.canvas.addEventListener('mousedown', this.clickHandler);
+        this.canvas.addEventListener('pointerdown', this.clickHandler);
         this.canvas.addEventListener('touchmove', this.touchMoveHandler, { passive: false });
         this.canvas.addEventListener('touchstart', this.touchStartHandler, { passive: false });
 
         this.handleKey = (e) => {
+            if (e.code === 'ArrowLeft') this.keys.left = true;
+            if (e.code === 'ArrowRight') this.keys.right = true;
             if (e.code === 'Escape') {
                 this.paused = !this.paused;
             }
-            if (e.code === 'Space') {
+            if (e.code === 'Space' || e.code === 'ArrowUp') {
                 e.preventDefault();
                 if (this.balls.some(b => !b.active)) {
                     this.serveBall();
                 }
             }
+            if (this.gameOver && e.code === 'KeyR') {
+                this.stop();
+                this.init();
+            }
+        };
+        this.handleKeyUp = (e) => {
+            if (e.code === 'ArrowLeft') this.keys.left = false;
+            if (e.code === 'ArrowRight') this.keys.right = false;
         };
         window.addEventListener('keydown', this.handleKey);
+        window.addEventListener('keyup', this.handleKeyUp);
 
         this.createLevel();
         this.resetBall();
@@ -125,8 +147,9 @@ export class CosmicBreaker {
         this.scaler.destroy();
         this.isRunning = false;
         window.removeEventListener('mousemove', this.inputHandler);
-        this.canvas.removeEventListener('mousedown', this.clickHandler);
+        this.canvas.removeEventListener('pointerdown', this.clickHandler);
         window.removeEventListener('keydown', this.handleKey);
+        window.removeEventListener('keyup', this.handleKeyUp);
         this.canvas.removeEventListener('touchmove', this.touchMoveHandler);
         this.canvas.removeEventListener('touchstart', this.touchStartHandler);
         this.canvas.remove();
@@ -205,7 +228,11 @@ export class CosmicBreaker {
     }
 
     update(dt) {
-        if (!this.isRunning || this.paused) return;
+        if (!this.isRunning || this.paused || this.gameOver) return;
+
+        const PADDLE_SPEED = 800;
+        if (this.keys.left) this.mouseX -= PADDLE_SPEED * dt;
+        if (this.keys.right) this.mouseX += PADDLE_SPEED * dt;
 
         this.paddle.x = this.mouseX - this.paddle.width / 2;
         this.paddle.x = Math.max(0, Math.min(this.width - this.paddle.width, this.paddle.x));
@@ -263,7 +290,7 @@ export class CosmicBreaker {
                         this.createExplosion(brick.x + brick.width / 2, brick.y + brick.height / 2, brick.color);
                         this.shake = 5;
 
-                        if (Math.random() < 0.15) {
+                        if (Math.random() < 0.35) {
                             this.spawnPowerUp(brick.x + brick.width / 2, brick.y + brick.height / 2);
                         }
                     } else {
@@ -416,9 +443,9 @@ export class CosmicBreaker {
         this.paddle.color = '#00f3ff';
 
         if (this.lives <= 0) {
-            this.isRunning = false;
+            this.gameOver = true;
             this.storage.saveHighScore('cosmic-breaker', this.score);
-            this.onGameOver();
+            if (this.onGameOver) this.onGameOver();
         } else {
             this.resetBall();
         }
@@ -574,6 +601,23 @@ export class CosmicBreaker {
             this.ctx.fillStyle = '#fff';
             this.ctx.font = '16px monospace';
             this.ctx.fillText('Press ESC to resume', this.width / 2, this.height / 2 + 40);
+        }
+
+        if (this.gameOver) {
+            this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+            this.ctx.fillStyle = '#f00';
+            this.ctx.font = '40px monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText('GAME OVER', this.width / 2, this.height / 2 - 20);
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '20px monospace';
+            this.ctx.fillText(`Score: ${this.score}`, this.width / 2, this.height / 2 + 20);
+            this.ctx.fillText('Press R to Restart', this.width / 2, this.height / 2 + 55);
+            if (this.score >= this.highScore && this.score > 0) {
+                this.ctx.fillStyle = '#ff0';
+                this.ctx.fillText('NEW HIGH SCORE!', this.width / 2, this.height / 2 + 90);
+            }
         }
     }
 }

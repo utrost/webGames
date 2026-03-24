@@ -29,6 +29,7 @@ export class Asteroids {
         this.lives = 3;
         this.gameOver = false;
         this.paused = false;
+        this.shootCooldown = 0;
 
         this.entities = [];
         this.asteroids = [];
@@ -163,7 +164,7 @@ export class Asteroids {
 
             this.ship.vel.scale(0.99);
 
-            if ((this.keys['Space'] || this.touchState.fire) && !this.shootCooldown) {
+            if ((this.keys['Space'] || this.touchState.fire) && this.shootCooldown <= 0) {
                 this.shoot();
                 this.shootCooldown = 0.2;
             }

@@ -43,27 +43,43 @@ export class NeonFlow {
 
         this.mouseX = 0;
         this.mouseY = 0;
+        this.cursor = { r: 0, c: 0 };
         this.inputHandler = (e) => {
             const rect = this.canvas.getBoundingClientRect();
             this.mouseX = (e.clientX - rect.left) * (this.width / rect.width);
             this.mouseY = (e.clientY - rect.top) * (this.height / rect.height);
+
+            if (this.grid) {
+                const gridX = this.mouseX - this.gridOffsetX;
+                const gridY = this.mouseY - this.gridOffsetY;
+                const c = Math.floor(gridX / this.tileSize);
+                const r = Math.floor(gridY / this.tileSize);
+                if (r >= 0 && r < this.grid.rows && c >= 0 && c < this.grid.cols) {
+                    this.cursor = { r, c };
+                }
+            }
         };
-        this.clickHandler = () => {
+        this.clickHandler = (e) => {
+            e.preventDefault();
             if (this.audio.context.state === 'suspended') {
                 this.audio.context.resume();
             }
-            if (!this.paused) this.onClick();
+            if (!this.paused) {
+                this.inputHandler(e);
+                this.onClick();
+            }
         };
         this.touchHandler = (e) => {
             e.preventDefault();
             const touch = e.changedTouches[0];
-            const rect = this.canvas.getBoundingClientRect();
-            this.mouseX = (touch.clientX - rect.left) * (this.width / rect.width);
-            this.mouseY = (touch.clientY - rect.top) * (this.height / rect.height);
+            const evt = { clientX: touch.clientX, clientY: touch.clientY };
             if (this.audio.context.state === 'suspended') {
                 this.audio.context.resume();
             }
-            if (!this.paused) this.onClick();
+            if (!this.paused) {
+                this.inputHandler(evt);
+                this.onClick();
+            }
         };
     }
 
@@ -72,13 +88,28 @@ export class NeonFlow {
         this.moves = 0;
         this.loadLevel(this.currentLevelIndex);
 
-        window.addEventListener('mousemove', this.inputHandler);
-        window.addEventListener('click', this.clickHandler);
-        this.canvas.addEventListener('touchend', this.touchHandler, { passive: false });
+        window.addEventListener('pointermove', this.inputHandler);
+        this.canvas.addEventListener('pointerdown', this.clickHandler);
+        this.canvas.addEventListener('touchstart', this.touchHandler, { passive: false });
 
         this.handleKey = (e) => {
             if (e.code === 'Escape') {
                 this.paused = !this.paused;
+                return;
+            }
+            if (this.paused) return;
+
+            if (e.code === 'ArrowUp') this.cursor.r = Math.max(0, this.cursor.r - 1);
+            if (e.code === 'ArrowDown') this.cursor.r = Math.min(this.grid.rows - 1, this.cursor.r + 1);
+            if (e.code === 'ArrowLeft') this.cursor.c = Math.max(0, this.cursor.c - 1);
+            if (e.code === 'ArrowRight') this.cursor.c = Math.min(this.grid.cols - 1, this.cursor.c + 1);
+
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                if (this.audio.context.state === 'suspended') {
+                    this.audio.context.resume();
+                }
+                this.onClickPos(this.cursor.r, this.cursor.c);
             }
         };
         window.addEventListener('keydown', this.handleKey);
@@ -106,6 +137,7 @@ export class NeonFlow {
 
         this.gridOffsetX = (this.width - this.grid.cols * this.tileSize) / 2;
         this.gridOffsetY = (this.height - this.grid.rows * this.tileSize) / 2;
+        this.cursor = { r: Math.floor(this.grid.rows / 2), c: Math.floor(this.grid.cols / 2) };
 
         this.particles = [];
         this.moves = 0;
@@ -116,10 +148,10 @@ export class NeonFlow {
         this.loop.stop();
         this.scaler.destroy();
         this.isRunning = false;
-        window.removeEventListener('mousemove', this.inputHandler);
-        window.removeEventListener('click', this.clickHandler);
+        window.removeEventListener('pointermove', this.inputHandler);
+        this.canvas.removeEventListener('pointerdown', this.clickHandler);
         window.removeEventListener('keydown', this.handleKey);
-        this.canvas.removeEventListener('touchend', this.touchHandler);
+        this.canvas.removeEventListener('touchstart', this.touchHandler);
         this.canvas.remove();
     }
 
@@ -168,6 +200,12 @@ export class NeonFlow {
                 this.ctx.strokeStyle = '#222';
                 this.ctx.lineWidth = 1;
                 this.ctx.strokeRect(x, y, this.tileSize, this.tileSize);
+
+                if (r === this.cursor.r && c === this.cursor.c) {
+                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                    this.ctx.lineWidth = 3;
+                    this.ctx.strokeRect(x, y, this.tileSize, this.tileSize);
+                }
 
                 if (!tile) continue;
 
@@ -336,6 +374,12 @@ export class NeonFlow {
         const c = Math.floor(gridX / this.tileSize);
         const r = Math.floor(gridY / this.tileSize);
 
+        if (r >= 0 && r < this.grid.rows && c >= 0 && c < this.grid.cols) {
+            this.onClickPos(r, c);
+        }
+    }
+
+    onClickPos(r, c) {
         if (this.grid.rotateTile(r, c)) {
             this.moves++;
             this.totalMoves++;

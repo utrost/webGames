@@ -15,6 +15,14 @@ A collection of browser-based games built with vanilla JavaScript and HTML5 Canv
 | **Neon Blocks** | Tetris / Puzzle | ✅ v1.0 |
 | **Elemental Sandbox** | Falling Sand / Sim | ✅ v1.0 |
 
+## Key Features
+
+- **Hub Lobby**: Browse, select, and seamlessly transition between games without page reloads.
+- **Achievements System**: Cross-game achievement tracking with toast notifications.
+- **Settings & Stats**: Global volume control, color-blind mode, and session statistics tracking.
+- **Progressive Web App (PWA)**: Includes a service worker for offline play.
+- **Cross-Platform Input**: Mouse, Keyboard, Touch, and Gamepad support.
+
 ## Tech Stack
 
 - **Vanilla JS** (ES modules, no frameworks)
