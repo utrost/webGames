@@ -3,6 +3,7 @@ import { AudioManager } from '../../core/AudioManager.js';
 import { StorageManager } from '../../core/StorageManager.js';
 import { CanvasScaler } from '../../core/CanvasScaler.js';
 import { SHAPES } from './Shapes.js';
+import { CONFIG } from './config.js';
 
 export class NeonBlocks {
     constructor(canvasContainer, onGameOver) {
@@ -12,10 +13,9 @@ export class NeonBlocks {
         this.audio = new AudioManager();
         this.storage = new StorageManager();
 
-        // Main canvas (game + side panel)
         this.canvas = document.createElement('canvas');
-        this.canvas.width = 480; // 300 game + 180 side panel
-        this.canvas.height = 600;
+        this.canvas.width = CONFIG.CANVAS_WIDTH;
+        this.canvas.height = CONFIG.CANVAS_HEIGHT;
         this.container.appendChild(this.canvas);
         this.ctx = this.canvas.getContext('2d');
 
@@ -24,10 +24,10 @@ export class NeonBlocks {
         this.canvas.style.border = '2px solid #333';
         this.canvas.style.backgroundColor = '#050505';
 
-        this.cols = 10;
-        this.rows = 20;
-        this.blockSize = 30;
-        this.gameWidth = 300;
+        this.cols = CONFIG.COLS;
+        this.rows = CONFIG.ROWS;
+        this.blockSize = CONFIG.BLOCK_SIZE;
+        this.gameWidth = CONFIG.GAME_WIDTH;
 
         this.scaler = new CanvasScaler(this.canvas, this.canvas.width, this.canvas.height);
         this.highScore = this.storage.getHighScore('neon-blocks');
@@ -40,11 +40,19 @@ export class NeonBlocks {
         this.level = 1;
         this.linesCleared = 0;
         this.dropCounter = 0;
-        this.dropInterval = 1000;
+        this.dropInterval = CONFIG.INITIAL_DROP_INTERVAL;
         this.gameOver = false;
         this.paused = false;
         this.particles = [];
         this.levelUpFlash = 0;
+
+        // Lock delay state
+        this.lockTimer = 0;
+        this.lockResets = 0;
+        this.isLanding = false;
+
+        // 7-bag randomizer
+        this.bag = [];
 
         this.player = {
             pos: { x: 0, y: 0 },
@@ -52,7 +60,7 @@ export class NeonBlocks {
             color: null
         };
 
-        this.nextPiece = this.randomPiece();
+        this.nextPiece = this._pullFromBag();
         this.resetPiece();
 
         this.handleKey = (e) => {
@@ -73,7 +81,7 @@ export class NeonBlocks {
             else if (e.code === 'ArrowUp') this.playerRotate(1);
             else if (e.code === 'Space') this.playerHardDrop();
         };
-        window.addEventListener('keydown', this.handleKey);
+        globalThis.addEventListener('keydown', this.handleKey);
 
         // Touch controls
         this.touchStartX = 0;
@@ -96,15 +104,14 @@ export class NeonBlocks {
             const dy = touch.clientY - this.touchStartY;
             const dt = Date.now() - this.touchStartTime;
 
-            if (Math.abs(dx) < 20 && Math.abs(dy) < 20 && dt < 300) {
-                // Tap = rotate
+            if (Math.abs(dx) < CONFIG.TOUCH_TAP_THRESHOLD && Math.abs(dy) < CONFIG.TOUCH_TAP_THRESHOLD && dt < CONFIG.TOUCH_TAP_TIME) {
                 this.playerRotate(1);
             } else if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx > 30) this.playerMove(1);
-                else if (dx < -30) this.playerMove(-1);
+                if (dx > CONFIG.SWIPE_THRESHOLD) this.playerMove(1);
+                else if (dx < -CONFIG.SWIPE_THRESHOLD) this.playerMove(-1);
             } else {
-                if (dy > 50) this.playerHardDrop();
-                else if (dy > 20) this.playerDrop();
+                if (dy > CONFIG.HARD_DROP_THRESHOLD) this.playerHardDrop();
+                else if (dy > CONFIG.TOUCH_TAP_THRESHOLD) this.playerDrop();
             }
         };
 
@@ -118,9 +125,18 @@ export class NeonBlocks {
         this.loop.start();
     }
 
-    randomPiece() {
-        const types = 'ILJOTSZ';
-        const type = types[Math.floor(Math.random() * types.length)];
+    // 7-bag randomizer: shuffle all 7 types, deal from bag
+    _pullFromBag() {
+        if (this.bag.length === 0) {
+            const types = 'ILJOTSZ'.split('');
+            // Fisher-Yates shuffle
+            for (let i = types.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [types[i], types[j]] = [types[j], types[i]];
+            }
+            this.bag = types;
+        }
+        const type = this.bag.pop();
         const shape = SHAPES[type];
         return {
             matrix: shape.matrix.map(row => [...row]),
@@ -132,6 +148,8 @@ export class NeonBlocks {
         this.player.pos.x += dir;
         if (this.collide(this.grid, this.player)) {
             this.player.pos.x -= dir;
+        } else {
+            this._resetLockDelay();
         }
     }
 
@@ -139,19 +157,20 @@ export class NeonBlocks {
         this.player.pos.y++;
         if (this.collide(this.grid, this.player)) {
             this.player.pos.y--;
-            this.merge(this.grid, this.player);
-            this.arenaSweep();
-            this.resetPiece();
-            this.dropCounter = 0;
+            this._lockPiece();
         }
         this.dropCounter = 0;
     }
 
     playerHardDrop() {
+        let dropped = 0;
         while (!this.collide(this.grid, this.player)) {
             this.player.pos.y++;
+            dropped++;
         }
         this.player.pos.y--;
+        dropped--;
+        this.score += dropped * 2;
         this.merge(this.grid, this.player);
         this.arenaSweep();
         this.resetPiece();
@@ -172,6 +191,7 @@ export class NeonBlocks {
                 return;
             }
         }
+        this._resetLockDelay();
     }
 
     rotate(matrix, dir) {
@@ -187,16 +207,34 @@ export class NeonBlocks {
     resetPiece() {
         this.player.matrix = this.nextPiece.matrix;
         this.player.color = this.nextPiece.color;
-        this.nextPiece = this.randomPiece();
+        this.nextPiece = this._pullFromBag();
 
         this.player.pos.y = 0;
         this.player.pos.x = (this.cols / 2 | 0) - (this.player.matrix[0].length / 2 | 0);
+
+        this.isLanding = false;
+        this.lockTimer = 0;
+        this.lockResets = 0;
 
         if (this.collide(this.grid, this.player)) {
             this.gameOver = true;
             this.storage.saveHighScore('neon-blocks', this.score);
             if (this.onGameOver) this.onGameOver();
         }
+    }
+
+    _resetLockDelay() {
+        if (this.isLanding && this.lockResets < CONFIG.LOCK_DELAY_RESETS) {
+            this.lockTimer = 0;
+            this.lockResets++;
+        }
+    }
+
+    _lockPiece() {
+        this.merge(this.grid, this.player);
+        this.arenaSweep();
+        this.resetPiece();
+        this.audio.playTone(200, 'sine', 0.05);
     }
 
     collide(arena, player) {
@@ -244,11 +282,10 @@ export class NeonBlocks {
         }
 
         if (rowCount > 0) {
-            const points = rowCount * 100 * rowCount;
+            const points = rowCount * CONFIG.SINGLE_LINE_SCORE * rowCount;
             this.score += points;
             this.linesCleared += rowCount;
 
-            // Sound based on combo
             if (rowCount >= 4) {
                 this.audio.playTone(880, 'square', 0.2);
                 this.audio.playTone(1100, 'sine', 0.2);
@@ -256,10 +293,9 @@ export class NeonBlocks {
                 this.audio.playTone(600 + rowCount * 100, 'sine', 0.1);
             }
 
-            const prevLevel = this.level;
-            if (this.linesCleared > this.level * 5) {
+            if (this.linesCleared >= this.level * CONFIG.LINES_PER_LEVEL) {
                 this.level++;
-                this.dropInterval *= 0.9;
+                this.dropInterval *= CONFIG.DROP_SPEED_FACTOR;
                 this.levelUpFlash = 1.0;
                 this.audio.playTone(1320, 'square', 0.3);
             }
@@ -282,13 +318,33 @@ export class NeonBlocks {
         this.loop.stop();
         this.scaler.destroy();
         this.canvas.remove();
-        window.removeEventListener('keydown', this.handleKey);
+        globalThis.removeEventListener('keydown', this.handleKey);
         this.canvas.removeEventListener('touchstart', this.handleTouchStart);
         this.canvas.removeEventListener('touchend', this.handleTouchEnd);
     }
 
     update(dt) {
         if (this.gameOver || this.paused) return;
+
+        // Check if piece is about to land (one row below would collide)
+        const testPlayer = { matrix: this.player.matrix, pos: { x: this.player.pos.x, y: this.player.pos.y + 1 } };
+        const wouldCollide = this.collide(this.grid, testPlayer);
+
+        if (wouldCollide) {
+            if (!this.isLanding) {
+                this.isLanding = true;
+                this.lockTimer = 0;
+                this.lockResets = 0;
+            }
+            this.lockTimer += dt * 1000;
+            if (this.lockTimer >= CONFIG.LOCK_DELAY) {
+                this._lockPiece();
+                this.dropCounter = 0;
+            }
+        } else {
+            this.isLanding = false;
+            this.lockTimer = 0;
+        }
 
         this.dropCounter += dt * 1000;
         if (this.dropCounter > this.dropInterval) {
@@ -316,6 +372,22 @@ export class NeonBlocks {
         if (this.levelUpFlash > 0) {
             this.ctx.fillStyle = `rgba(0, 243, 255, ${this.levelUpFlash * 0.15})`;
             this.ctx.fillRect(0, 0, this.gameWidth, this.canvas.height);
+        }
+
+        // Grid lines
+        this.ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        this.ctx.lineWidth = 1;
+        for (let x = 1; x < this.cols; x++) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x * this.blockSize, 0);
+            this.ctx.lineTo(x * this.blockSize, this.canvas.height);
+            this.ctx.stroke();
+        }
+        for (let y = 1; y < this.rows; y++) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, y * this.blockSize);
+            this.ctx.lineTo(this.gameWidth, y * this.blockSize);
+            this.ctx.stroke();
         }
 
         // Render Grid
@@ -373,6 +445,43 @@ export class NeonBlocks {
         this.ctx.strokeRect(0, 0, this.gameWidth, this.canvas.height);
 
         // Side Panel
+        this.renderSidePanel();
+
+        // Pause overlay
+        if (this.paused) {
+            this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.fillStyle = '#00f3ff';
+            this.ctx.textAlign = 'center';
+            this.ctx.font = '30px monospace';
+            this.ctx.fillText('PAUSED', this.canvas.width / 2, this.canvas.height / 2);
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '16px monospace';
+            this.ctx.fillText('Press ESC to resume', this.canvas.width / 2, this.canvas.height / 2 + 35);
+        }
+
+        // Game Over
+        if (this.gameOver) {
+            this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.fillStyle = '#f00';
+            this.ctx.textAlign = 'center';
+            this.ctx.font = '30px monospace';
+            this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 20);
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '20px monospace';
+            this.ctx.fillText(`Score: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 20);
+            if (this.score >= this.highScore && this.score > 0) {
+                this.ctx.fillStyle = '#ff0';
+                this.ctx.fillText('NEW HIGH SCORE!', this.canvas.width / 2, this.canvas.height / 2 + 50);
+            }
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '16px monospace';
+            this.ctx.fillText('Press R to Restart', this.canvas.width / 2, this.canvas.height / 2 + 85);
+        }
+    }
+
+    renderSidePanel() {
         const panelX = this.gameWidth + 10;
 
         this.ctx.fillStyle = '#fff';
@@ -441,44 +550,11 @@ export class NeonBlocks {
         // Controls hint
         this.ctx.fillStyle = 'rgba(255,255,255,0.4)';
         this.ctx.font = '10px monospace';
-        this.ctx.fillText('← → Move', panelX, 430);
-        this.ctx.fillText('↑ Rotate', panelX, 445);
-        this.ctx.fillText('↓ Soft Drop', panelX, 460);
+        this.ctx.fillText('\u2190 \u2192 Move', panelX, 430);
+        this.ctx.fillText('\u2191 Rotate', panelX, 445);
+        this.ctx.fillText('\u2193 Soft Drop', panelX, 460);
         this.ctx.fillText('SPC Hard Drop', panelX, 475);
         this.ctx.fillText('ESC Pause', panelX, 490);
-
-        // Pause overlay
-        if (this.paused) {
-            this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.fillStyle = '#00f3ff';
-            this.ctx.textAlign = 'center';
-            this.ctx.font = '30px monospace';
-            this.ctx.fillText('PAUSED', this.canvas.width / 2, this.canvas.height / 2);
-            this.ctx.fillStyle = '#fff';
-            this.ctx.font = '16px monospace';
-            this.ctx.fillText('Press ESC to resume', this.canvas.width / 2, this.canvas.height / 2 + 35);
-        }
-
-        // Game Over
-        if (this.gameOver) {
-            this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.fillStyle = '#f00';
-            this.ctx.textAlign = 'center';
-            this.ctx.font = '30px monospace';
-            this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 20);
-            this.ctx.fillStyle = '#fff';
-            this.ctx.font = '20px monospace';
-            this.ctx.fillText(`Score: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 20);
-            if (this.score >= this.highScore && this.score > 0) {
-                this.ctx.fillStyle = '#ff0';
-                this.ctx.fillText('NEW HIGH SCORE!', this.canvas.width / 2, this.canvas.height / 2 + 50);
-            }
-            this.ctx.fillStyle = '#fff';
-            this.ctx.font = '16px monospace';
-            this.ctx.fillText('Press R to Restart', this.canvas.width / 2, this.canvas.height / 2 + 85);
-        }
     }
 
     drawBlock(x, y, color) {

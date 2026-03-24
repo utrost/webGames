@@ -9,6 +9,8 @@ export const CONFIG = {
     DROP_SPEED_FACTOR: 0.9,
     LINES_PER_LEVEL: 5,
     SINGLE_LINE_SCORE: 100,
+    LOCK_DELAY: 500,        // ms before piece locks after landing
+    LOCK_DELAY_RESETS: 15,  // max lock delay resets from moves
     TOUCH_TAP_THRESHOLD: 20,
     TOUCH_TAP_TIME: 300,
     SWIPE_THRESHOLD: 30,
