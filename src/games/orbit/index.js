@@ -112,7 +112,7 @@ export class Orbit {
 
         if (this.isDragging) {
             const diff = this.dragStart.clone().subtract(this.dragCurrent);
-            const launchVel = diff.scale(0.05);
+            const launchVel = diff.scale(0.5);
 
             const dummy = new Projectile(this.dragStart.x, this.dragStart.y);
             const path = this.physics.predict(this.bodies, dummy, launchVel, 60, 0.016);
@@ -199,13 +199,13 @@ export class Orbit {
             this.isDragging = false;
 
             const diff = this.dragStart.clone().subtract(this.dragCurrent);
-            const launchVel = diff.scale(0.05);
+            const launchVel = diff.scale(0.5);
 
             const p = new Projectile(this.dragStart.x, this.dragStart.y);
             p.setVelocity(launchVel);
 
             p.onCollision = (other) => {
-                if (other.constructor.name === 'Comet') {
+                if (other.type === 'Comet') {
                     this.score += 100;
                     this.audio.playTone(800 + Math.random() * 400, 'sine', 0.1);
                 }

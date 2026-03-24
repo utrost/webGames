@@ -91,7 +91,7 @@ export class CosmicBreaker {
 
     init() {
         window.addEventListener('mousemove', this.inputHandler);
-        window.addEventListener('click', this.clickHandler);
+        this.canvas.addEventListener('click', this.clickHandler);
         this.canvas.addEventListener('touchmove', this.touchMoveHandler, { passive: false });
         this.canvas.addEventListener('touchstart', this.touchStartHandler, { passive: false });
 
@@ -118,7 +118,7 @@ export class CosmicBreaker {
         this.scaler.destroy();
         this.isRunning = false;
         window.removeEventListener('mousemove', this.inputHandler);
-        window.removeEventListener('click', this.clickHandler);
+        this.canvas.removeEventListener('click', this.clickHandler);
         window.removeEventListener('keydown', this.handleKey);
         this.canvas.removeEventListener('touchmove', this.touchMoveHandler);
         this.canvas.removeEventListener('touchstart', this.touchStartHandler);
