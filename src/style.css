@@ -57,6 +57,14 @@ header h1 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-bottom: 20px;
+}
+
+.lobby-menu > p {
+  font-size: 1rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
 }
 
 .game-list {
@@ -69,26 +77,59 @@ header h1 {
 }
 
 .game-card {
-  border: 2px solid var(--neon-blue);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px var(--neon-blue);
+  --card-glow: var(--neon-blue);
+  border: 2px solid var(--card-glow);
+  padding: 20px 24px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--card-glow) 40%, transparent);
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  min-width: 120px;
+  width: 200px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .game-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 25px var(--neon-blue);
+  box-shadow: 0 0 25px var(--card-glow), inset 0 0 30px color-mix(in srgb, var(--card-glow) 10%, transparent);
 }
 
-.game-card .high-score {
-  display: block;
+.card-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  margin-bottom: 8px;
+  text-shadow: 0 0 12px currentColor;
+}
+
+.game-card h3 {
+  margin: 4px 0 8px;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+}
+
+.genre-tag {
+  display: inline-block;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.card-desc {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin: 10px 0 6px;
+  line-height: 1.3;
+}
+
+.high-score {
   color: #ff0;
   margin-top: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-shadow: 0 0 5px #ff0;
+  letter-spacing: 0.05em;
 }
 
 .disabled {
@@ -355,6 +396,7 @@ header h1 {
     width: 85%;
     max-width: 340px;
     padding: 16px;
+    box-sizing: border-box;
   }
 
   .back-btn {

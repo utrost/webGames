@@ -31,12 +31,12 @@ window.addEventListener('keydown', (e) => {
 });
 
 const games = [
-    { id: 'cosmic-breaker', title: 'Cosmic Breaker', description: 'Physics-based breakout action!', class: CosmicBreaker },
-    { id: 'neon-flow', title: 'Neon Flow', description: 'Connect the energy nodes.', class: NeonFlow },
-    { id: 'orbit', title: 'Orbit', description: 'Defend the gravity well.', class: Orbit },
-    { id: 'asteroids', title: 'Asteroids', description: 'Neon Vector Shooter.', class: Asteroids },
-    { id: 'neon-blocks', title: 'Neon Blocks', description: 'Glowing Tetrominoes.', class: NeonBlocks },
-    { id: 'elemental-sandbox', title: 'Elemental Sandbox', description: 'Paint with physics!', class: ElementalSandbox }
+    { id: 'cosmic-breaker', title: 'Cosmic Breaker', description: 'Smash neon bricks with power-ups, multi-ball, and screen-shake action.', genre: 'Breakout', icon: '&#9632;', color: '#ff00ff', class: CosmicBreaker },
+    { id: 'neon-flow', title: 'Neon Flow', description: 'Rotate pipes to route RGB energy streams to their receivers.', genre: 'Puzzle', icon: '&#9784;', color: '#00ff88', class: NeonFlow },
+    { id: 'orbit', title: 'Orbit', description: 'Sling counter-bodies to keep planets in stable orbits.', genre: 'Physics', icon: '&#9788;', color: '#ffaa00', class: Orbit },
+    { id: 'asteroids', title: 'Asteroids', description: 'Pilot a neon ship through endless asteroid waves.', genre: 'Shooter', icon: '&#9733;', color: '#00f3ff', class: Asteroids },
+    { id: 'neon-blocks', title: 'Neon Blocks', description: 'Stack glowing tetrominoes — clear lines, climb levels.', genre: 'Puzzle', icon: '&#9642;', color: '#ff3366', class: NeonBlocks },
+    { id: 'elemental-sandbox', title: 'Elemental Sandbox', description: 'Paint with sand, water, fire, and acid in a pixel physics sim.', genre: 'Sandbox', icon: '&#9883;', color: '#ffff00', class: ElementalSandbox }
 ];
 
 // Achievements system
@@ -112,11 +112,17 @@ function initLobby() {
         if (!game.class) card.classList.add('disabled');
 
         const highScore = storage.getHighScore(game.id);
-        const scoreDisplay = highScore > 0 ? `<small class="high-score">HI: ${highScore}</small>` : '';
+        const scoreDisplay = highScore > 0 ? `<div class="high-score">HI: ${highScore}</div>` : '';
+        const accentColor = game.color || 'var(--neon-blue)';
+
+        card.style.borderColor = accentColor;
+        card.style.setProperty('--card-glow', accentColor);
 
         card.innerHTML = `
+      <div class="card-icon" style="color:${accentColor}">${game.icon}</div>
       <h3>${game.title}</h3>
-      <p>${game.description}</p>
+      <span class="genre-tag" style="border-color:${accentColor};color:${accentColor}">${game.genre}</span>
+      <p class="card-desc">${game.description}</p>
       ${scoreDisplay}
       ${!game.class ? '<small>Coming Soon</small>' : ''}
     `;
