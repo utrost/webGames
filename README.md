@@ -1,5 +1,7 @@
 # Web Games Arcade
 
+🎮 **[Play now → simiono.com/games/](https://simiono.com/games/)** | [GitHub Pages Mirror](https://utrost.github.io/webGames/)
+
 A collection of browser-based games built with vanilla JavaScript and HTML5 Canvas. Neon-retro aesthetic, no frameworks, minimal dependencies.
 
 ## Games
@@ -103,4 +105,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-Private repository. All rights reserved.
+[AGPL-3.0](LICENSE)
