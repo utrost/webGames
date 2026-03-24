@@ -12,11 +12,14 @@ body {
   background-color: var(--bg-color);
   color: white;
   font-family: 'Courier New', Courier, monospace;
-  overflow: hidden;
-  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #app {
@@ -318,6 +321,24 @@ header h1 {
   margin: 4px 0;
 }
 
+/* Game canvas container — centre & scale on all viewports */
+#game-canvas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-height: calc(100vh - 80px);
+  max-height: calc(100dvh - 80px);
+  overflow: hidden;
+}
+
+#game-canvas-container canvas {
+  max-width: 100%;
+  max-height: calc(100vh - 80px);
+  max-height: calc(100dvh - 80px);
+  touch-action: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   header h1 {
@@ -331,7 +352,48 @@ header h1 {
   }
 
   .game-card {
-    width: 80%;
-    max-width: 300px;
+    width: 85%;
+    max-width: 340px;
+    padding: 16px;
+  }
+
+  .back-btn {
+    top: 10px;
+    left: 10px;
+    padding: 8px 14px;
+    font-size: 1rem;
+  }
+
+  .settings-btn {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .settings-panel {
+    padding: 20px 12px;
+  }
+
+  .setting-row input[type="range"] {
+    width: 140px;
+  }
+
+  footer p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .game-card {
+    padding: 12px;
+    min-width: unset;
+  }
+
+  .game-card h3 {
+    font-size: 1rem;
   }
 }
