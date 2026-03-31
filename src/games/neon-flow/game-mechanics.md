@@ -118,6 +118,7 @@ All Receivers must have exactly the required color mix. Checked after every pipe
 | Arrow keys | Move cursor (keyboard navigation) |
 | Space / Enter | Rotate pipe at cursor |
 | Escape | Pause |
+| R (all levels complete) | Restart from level 1 |
 
 ## Technical
 - **Canvas:** 800×600

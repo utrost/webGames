@@ -116,6 +116,7 @@ Select element → paint on canvas → watch physics and interactions unfold →
 | Number keys 0–8 | Select element |
 | `[` / `]` | Decrease/increase brush size |
 | C | Clear canvas |
+| R | Clear canvas (restart alias) |
 | Escape | Pause/resume simulation |
 
 ### Touch

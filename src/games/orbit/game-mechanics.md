@@ -41,7 +41,8 @@ Comets dive toward Sun → drag-aim projectiles → intercept comets → keep pl
 - **Mass:** 20, **Radius:** 4 px
 - **Launched by player** via sling mechanic
 - **Affected by gravity** (curves toward Sun and other bodies)
-- **Despawn:** At 1500 px from Sun
+- **Lifetime:** 8 seconds (then despawns)
+- **Despawn:** At 1500 px from Sun OR after 8 seconds
 
 ## Sling Mechanic (Core Interaction)
 1. **Click/touch and drag** anywhere on screen
@@ -60,7 +61,7 @@ Comets dive toward Sun → drag-aim projectiles → intercept comets → keep pl
 | A | B | Result |
 |---|---|---|
 | Comet | Projectile | Both destroyed, +100 score |
-| Comet | Planet | Both destroyed |
+| Comet | Planet | Both destroyed, green particle explosion + low tone |
 | Comet | Sun | Comet destroyed, Sun -10 HP |
 
 - **Detection:** Circle-circle (distSq < (r1+r2)²)
@@ -69,8 +70,10 @@ Comets dive toward Sun → drag-aim projectiles → intercept comets → keep pl
 ## Scoring
 | Action | Points |
 |---|---|
-| Comet intercepted (by projectile) | 100 |
+| Comet intercepted (by projectile) | 100 × planet multiplier |
 
+- **Planet Multiplier:** `1 + 0.5 × alive_planets` — keeping planets alive increases score
+- **HUD:** Shows "PLANETS: X (×Y.Z)" 
 - **High Score:** Persisted via StorageManager
 
 ## Visual Style
@@ -92,6 +95,7 @@ Comets dive toward Sun → drag-aim projectiles → intercept comets → keep pl
 | Click + drag | Aim sling (bullet time active) |
 | Release | Launch projectile |
 | Escape | Pause |
+| R (game over) | Restart |
 
 ### Touch
 - Touch start + move: Aim sling

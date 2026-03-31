@@ -95,6 +95,12 @@ Pieces fall → rotate and position → clear lines → level up → speed incre
 | Tetris (4 lines) | 880+1100 Hz | Square+Sine | 0.2s |
 | Level up | 1320 Hz | Square | 0.3s |
 
+## Hold Piece
+- **Key:** C
+- **Swaps** current piece with held piece (or holds current and spawns next if empty)
+- **Once per drop:** Can only hold once per piece placement
+- **Displayed** in side panel below Next preview
+
 ## Controls
 | Input | Action |
 |---|---|
@@ -102,6 +108,7 @@ Pieces fall → rotate and position → clear lines → level up → speed incre
 | Arrow Down | Soft drop |
 | Arrow Up | Rotate clockwise |
 | Space | Hard drop |
+| C | Hold piece |
 | Escape | Pause |
 | R (game over) | Restart |
 

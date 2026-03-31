@@ -55,7 +55,7 @@ Launch ball → break bricks → catch power-ups → clear level → advance.
 - **Level Cycling:** After level 5, loops back to 1 with accumulated score
 
 ## Power-Ups
-Drop chance: **35%** per brick destroyed.
+Drop chance: **15%** per brick destroyed (CONFIG.POWERUP_DROP_CHANCE).
 
 | Type | Symbol | Color | Effect |
 |---|---|---|---|

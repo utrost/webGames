@@ -46,6 +46,7 @@ Destroy asteroids → survive waves → achieve high score.
 - **Starting Lives:** 3
 - **Death:** Ship-asteroid collision → ship destroyed, particle explosion (20 cyan particles)
 - **Respawn:** 2.0 second delay, center of screen
+- **Invincibility:** 2.0 seconds after respawn — ship blinks (toggles every 0.1s), immune to asteroid collisions
 - **Game Over:** 0 lives remaining
 
 ## Scoring
