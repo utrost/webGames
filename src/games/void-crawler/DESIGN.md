@@ -48,7 +48,7 @@ Der Spieler hat **1 Aktion** pro Runde (2 mit Speed-Upgrade):
 | Stat | Startwert | Beschreibung |
 |---|---|---|
 | HP | 100 | Lebenspunkte. 0 = Tod, Run endet. |
-| O₂ | 200 | Sauerstoff. Sinkt jede Runde um 1. Bei 0 = 5 HP-Drain/Runde. |
+| O₂ | 200 | Sauerstoff. Sinkt jede Runde um 1.5. Bei 0 = 5 HP-Drain/Runde. |
 | ATK | 5 | Basis-Nahkampfschaden |
 | DEF | 0 | Schadensreduktion (von Rüstung) |
 | SIGHT | 7 | FOV-Radius in Tiles |
@@ -129,7 +129,7 @@ Monster-XP   = Basis-XP   × (1 + 0.15 × DTL)
 | 1–2 | Basis-DNA: 1 Verhalten, 0–1 Fähigkeiten, kein Element |
 | 3–4 | +1 Fähigkeit, elementarer Schaden möglich |
 | 5–6 | **Mutation**: 2 Fähigkeiten gleichzeitig, Elite-Varianten (10%) |
-| 7–8 | **Chimären**: 2 Körper-Templates gemischt, gemischte Gruppen (Tank+DPS+Support) |
+| 7–8 | **Chimären**: 2 Körper-Templates gemischt, gemischte Gruppen (Tank+DPS+Support). Resistenz = max(A,B), Schwäche = min(A,B) |
 | 9–10 | **Abominations**: 3 Fähigkeiten, einzigartige KI-Kombos, Mini-Boss-Stats |
 
 ### Elite- und Champion-System
@@ -212,7 +212,7 @@ Champion: Einzigartiger Name aus Pool: "NEREUS", "CHARYBDIS", "TETHYS"...
 | **Thermal** | 🔥 | Orange | `#ff6600` | **Burn**: 2 Schaden/Runde, 3 Runden (refresht, stackt nicht) |
 | **Cryo** | ❄️ | Hellblau | `#00bfff` | **Chill**: -50% Geschwindigkeit, 3 Runden. 2× Chill = **Freeze** (1 Runde Stun) |
 | **Shock** | ⚡ | Gelb | `#ffe100` | **Overload**: Nächster Treffer +30%. Kettet auf Nachbar-Tile (50%) |
-| **Acid** | ☣️ | Giftgrün | `#00ff00` | **Corrode**: -2 DEF, 5 Runden (stackt bis -10). Durability ×2 Verlust |
+| **Acid** | ☣️ | Giftgrün | `#00ff00` | **Corrode**: -2 DEF, 5 Runden (stackt bis max -5). Durability ×2 Verlust |
 
 ### Schadensberechnung
 
@@ -266,7 +266,7 @@ Effektive Schwäche  = Basis-Schwäche  + floor(DTL × 1)    (negative Werte, mi
 | Combo | Auslöser | Effekt |
 |---|---|---|
 | **Meltdown** | Thermal + Acid | Explosion: 50% Schaden auf alle Nachbar-Tiles |
-| **Shatter** | Cryo + Kinetic | Gefrorenes Ziel: ×2 Kinetic-Schaden, Freeze endet |
+| **Shatter** | Cryo + Kinetic (Melee only) | Gefrorenes Ziel: ×1.5 Kinetic-Nahkampf-Schaden, Freeze endet |
 | **EMP Surge** | Shock + Shock (Kette) | Alle Drohnen/Bots in 5×5: 3 Runden deaktiviert |
 | **Flash Freeze** | Cryo + Cryo (2 Quellen) | Freeze 3 Runden statt 1 |
 | **Toxic Cloud** | Thermal + Acid (auf Tile) | Säurepfütze → Gaswolke (3×3, 3 Runden, blockiert Sicht) |
@@ -378,6 +378,16 @@ Rüstungs-DEF = Basis-DEF × (1 + 0.20 × iLvl)
 | **Engineer's Rig** (Frame + Welder) | +20% Repair, Drohnen -30% Schaden |
 | **Xenohunter Kit** (Hazmat + Blade) | +25% vs. Organische, Acid-Resistenz 50% |
 | **Ghost Protocol** (Tarnfeld + Silent-Waffe) | Erster Angriff pro Raum = ×2 Schaden |
+| **Cryo Operative** (Cryo-Waffe + Exo-Frame) | Chill-Dauer +2 Runden, Freeze-Chance +15% |
+| **Firestarter** (Thermal-Waffe + Combat Plating) | Burn-Schaden ×2, Thermal-Resistenz 25% |
+| **Void Walker** (Void Armor + Null Lance) | +10% alle Resistenzen, Schaden skaliert mit fehlendem O₂ |
+| **Salvage King** (Magnetisch-Rüstung + Vampiric-Waffe) | Loot-Radius +2, Lifesteal +5% |
+| **Circuit Breaker** (Shock-Waffe + Shield-Belt) | Overload kettet auf 3 Ziele, Notfall-Schild +1 Ladung |
+| **Cryo Operator** (Cryo-Waffe + Exo-Frame) | Chill-Dauer +2 Runden, Cryo-Resistenz 30% |
+| **Reactor Tech** (Combat Plating + Launcher) | Explosion-Schaden +40%, Self-Destruct-Resistenz 50% |
+| **Void Walker** (Void Armor + Null Lance) | +15% alle Resistenzen, O₂-Verbrauch -10% |
+| **Field Medic** (Shield-Belt + Repair Kit in Inventar) | Regeneration 3 HP/10 Runden, Medkit-Effizienz +50% |
+| **Scavenger's Fortune** (Magnetisch-Rüstung + Salvage Efficiency Upgrade) | +30% Credits, Loot-Rarity +1 Stufe Chance |
 
 ### Verbrauchsgegenstände
 
@@ -436,6 +446,7 @@ Waffe:    [Prefix] + [Basis] + [Suffix]
 - Nahkampf: -1 pro Treffer
 - Fernkampf: -1 pro Schuss
 - Durability 0 = Waffe zerstört, zurück zum Wrench
+- **Wrench hat infinite Durability** — Fallback-Waffe kann nicht zerstört werden
 - Repair Kit: +5 Durability
 
 ### Vollständige Schadensformel
@@ -462,8 +473,8 @@ Minimum: **1 Schaden** pro Treffer (kein Nullschaden).
 | Regel | Wert |
 |---|---|
 | Start-O₂ | 200 (+ permanente Upgrades) |
-| Verbrauch | 1 O₂ / Runde (Standard) |
-| Exo-Frame | 0.8 O₂ / Runde |
+| Verbrauch | 1.5 O₂ / Runde (Standard) |
+| Exo-Frame | 1.2 O₂ / Runde |
 | O₂ = 0 | 5 HP Schaden / Runde (Erstickung) |
 | O₂-Tank | +50 O₂ |
 | Ventilation Station | +30 O₂, 1× pro Deck |
@@ -479,12 +490,12 @@ O₂ ist der **Zeitdruck**:
 
 | Situation | O₂/Runde |
 |---|---|
-| Standard | 1.0 |
-| Exo-Frame | 0.8 |
+| Standard | 1.5 |
+| Exo-Frame | 1.2 |
 | Decompressed-Deck | ×1.5 / ×2.0 / ×2.5 (nach DTL) |
-| Flooded-Tile | 2.0 |
-| Sprint (Stim Pack) | 1.5 |
-| Warten | 1.0 (keine Einsparung) |
+| Flooded-Tile | 3.0 |
+| Sprint (Stim Pack) | 2.0 |
+| Warten | 1.5 (keine Einsparung) |
 
 ---
 
@@ -717,7 +728,7 @@ Generiert via Web Audio API (AudioManager), keine externen Dateien.
 | Run-Dauer (Anfänger) | 5–10 Minuten (Tod Deck 2–3) |
 | O₂ pro Deck | ~40–60 Runden |
 | Gegner pro Deck | 5–15, steigend |
-| Credits pro Run (Deck 3 Tod) | 30–60 |
+| Credits pro Run (Deck 3 Tod) | 80–120 |
 | Credits pro Run (Deck 10 Clear) | 300–500 |
 | Vollständiges Upgrade-Set | ~15–20 Runs |
 | Erster Deck-10-Clear | Nach ~10 Runs |
