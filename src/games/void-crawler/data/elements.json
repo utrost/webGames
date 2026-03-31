@@ -48,7 +48,7 @@
     "color": "#00ff00",
     "statusEffect": {
       "name": "Corrode",
-      "defReduction": 2,
+      "defReduction": 1,
       "duration": 5,
       "stacks": true,
       "maxStacks": 5,
@@ -57,7 +57,7 @@
   },
   "combos": [
     { "id": "meltdown", "name": "Meltdown", "elements": ["thermal", "acid"], "effect": "aoe", "damageMult": 0.5, "radius": 1 },
-    { "id": "shatter", "name": "Shatter", "elements": ["cryo", "kinetic"], "effect": "criticalHit", "damageMult": 2.0, "endsFreeze": true },
+    { "id": "shatter", "name": "Shatter", "elements": ["cryo", "kinetic"], "effect": "criticalHit", "damageMult": 1.5, "endsFreeze": true, "meleeOnly": true },
     { "id": "empSurge", "name": "EMP Surge", "elements": ["shock", "shock"], "effect": "disable", "radius": 2, "duration": 3, "targets": ["drone"] },
     { "id": "flashFreeze", "name": "Flash Freeze", "elements": ["cryo", "cryo"], "effect": "longFreeze", "duration": 3 },
     { "id": "toxicCloud", "name": "Toxic Cloud", "elements": ["thermal", "acid"], "effect": "cloud", "radius": 1, "duration": 3, "blocksSight": true }

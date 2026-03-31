@@ -36,6 +36,8 @@ export class Orbit {
         this.paused = false;
 
         this.bodies = [];
+        this.particles = [];
+        this.planetCount = 1;
         this.sun = new Sun(this.width / 2, this.height / 2);
         this.sun.onDamage = () => {
             this.audio.playTone(100, 'square', 0.5);
@@ -73,13 +75,38 @@ export class Orbit {
 
         this.physics.update(this.bodies, simDt);
 
+        // Track planet count for score multiplier
+        this.planetCount = this.bodies.filter(b => b.type === 'Planet' && !b.toBeRemoved).length;
+
+        // Projectile lifetime
+        for (const b of this.bodies) {
+            if (b.type === 'Projectile') {
+                b.life = (b.life || 0) + simDt;
+                if (b.life >= 5) b.toBeRemoved = true;
+            }
+        }
+
         for (let i = this.bodies.length - 1; i >= 0; i--) {
             const b = this.bodies[i];
             const dist = b.pos.dist(this.sun.pos);
             if (dist > 1500) b.toBeRemoved = true;
             if (b.toBeRemoved) {
+                // Planet death visual/audio feedback
+                if (b.type === 'Planet') {
+                    this.spawnParticles(b.pos.x, b.pos.y, '#2ecc71', 20);
+                    this.audio.playTone(80, 'sine', 0.4);
+                }
                 this.bodies.splice(i, 1);
             }
+        }
+
+        // Update particles
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.life -= dt;
+            if (p.life <= 0) this.particles.splice(i, 1);
         }
 
         if (this.sun.hp <= 0) {
@@ -133,13 +160,24 @@ export class Orbit {
             this.ctx.stroke();
         }
 
+        // Particles
+        for (const p of this.particles) {
+            this.ctx.globalAlpha = p.life / p.maxLife;
+            this.ctx.fillStyle = p.color;
+            this.ctx.fillRect(p.x, p.y, p.size, p.size);
+        }
+        this.ctx.globalAlpha = 1.0;
+
         // UI
+        const multiplier = 1 + 0.5 * this.planetCount;
         this.ctx.fillStyle = '#fff';
         this.ctx.font = '20px monospace';
         this.ctx.textAlign = 'left';
         this.ctx.fillText(`SCORE: ${this.score}`, 20, 30);
         this.ctx.fillText(`HI: ${Math.max(this.score, this.highScore)}`, 20, 55);
         this.ctx.fillText(`SUN INTEGRITY: ${Math.max(0, this.sun.hp)}%`, 20, 80);
+        this.ctx.fillStyle = '#2ecc71';
+        this.ctx.fillText(`PLANETS: ${this.planetCount} (x${multiplier.toFixed(1)})`, 20, 105);
 
         if (this.paused) {
             this.ctx.fillStyle = 'rgba(0,0,0,0.7)';
@@ -167,6 +205,9 @@ export class Orbit {
                 this.ctx.fillStyle = '#ff0';
                 this.ctx.fillText('NEW HIGH SCORE!', this.width / 2, this.height / 2 + 70);
             }
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '16px monospace';
+            this.ctx.fillText('Press R to Restart', this.width / 2, this.height / 2 + 105);
         }
     }
 
@@ -206,8 +247,10 @@ export class Orbit {
 
             p.onCollision = (other) => {
                 if (other.type === 'Comet') {
-                    this.score += 100;
+                    const multiplier = 1 + 0.5 * this.planetCount;
+                    this.score += Math.floor(100 * multiplier);
                     this.audio.playTone(800 + Math.random() * 400, 'sine', 0.1);
+                    this.spawnParticles(other.pos.x, other.pos.y, '#e74c3c', 8);
                 }
             };
 
@@ -218,6 +261,10 @@ export class Orbit {
         this.handleKey = (e) => {
             if (e.code === 'Escape') {
                 this.paused = !this.paused;
+            }
+            if (this.gameOver && e.code === 'KeyR') {
+                this.stop();
+                this.init();
             }
         };
 
@@ -244,6 +291,22 @@ export class Orbit {
         this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
         this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
         this.canvas.addEventListener('touchend', this.handleTouchEnd, { passive: false });
+    }
+
+    spawnParticles(x, y, color, count) {
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 30 + Math.random() * 80;
+            this.particles.push({
+                x, y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 0.5 + Math.random() * 0.5,
+                maxLife: 1.0,
+                color,
+                size: 2 + Math.random() * 3
+            });
+        }
     }
 
     stop() {

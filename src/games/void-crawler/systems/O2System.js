@@ -5,7 +5,7 @@ export class O2System {
   constructor(maxO2 = 200) {
     this.maxO2 = maxO2;
     this.current = maxO2;
-    this.consumptionRate = 1.0;
+    this.consumptionRate = 1.5;
     this.depletionDamage = 5;
     this.alarmThreshold = 50;
     this.criticalThreshold = 20;

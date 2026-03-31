@@ -54,6 +54,10 @@ export class NeonBlocks {
         // 7-bag randomizer
         this.bag = [];
 
+        // Hold piece
+        this.holdPiece = null;
+        this.hasHeld = false;
+
         this.player = {
             pos: { x: 0, y: 0 },
             matrix: null,
@@ -80,6 +84,7 @@ export class NeonBlocks {
             else if (e.code === 'ArrowDown') this.playerDrop();
             else if (e.code === 'ArrowUp') this.playerRotate(1);
             else if (e.code === 'Space') this.playerHardDrop();
+            else if (e.code === 'KeyC') this.holdCurrentPiece();
         };
         globalThis.addEventListener('keydown', this.handleKey);
 
@@ -215,12 +220,48 @@ export class NeonBlocks {
         this.isLanding = false;
         this.lockTimer = 0;
         this.lockResets = 0;
+        this.hasHeld = false;
 
         if (this.collide(this.grid, this.player)) {
             this.gameOver = true;
             this.storage.saveHighScore('neon-blocks', this.score);
             if (this.onGameOver) this.onGameOver();
         }
+    }
+
+    holdCurrentPiece() {
+        if (this.hasHeld) return; // Can only hold once per piece
+        this.hasHeld = true;
+
+        const currentPiece = {
+            matrix: this.player.matrix,
+            color: this.player.color
+        };
+
+        if (this.holdPiece) {
+            // Swap with held piece
+            this.player.matrix = this.holdPiece.matrix;
+            this.player.color = this.holdPiece.color;
+            this.player.pos.y = 0;
+            this.player.pos.x = (this.cols / 2 | 0) - (this.player.matrix[0].length / 2 | 0);
+            this.isLanding = false;
+            this.lockTimer = 0;
+            this.lockResets = 0;
+        } else {
+            // No held piece — store current and get next
+            this.player.matrix = this.nextPiece.matrix;
+            this.player.color = this.nextPiece.color;
+            this.nextPiece = this._pullFromBag();
+            this.player.pos.y = 0;
+            this.player.pos.x = (this.cols / 2 | 0) - (this.player.matrix[0].length / 2 | 0);
+            this.isLanding = false;
+            this.lockTimer = 0;
+            this.lockResets = 0;
+        }
+
+        this.holdPiece = currentPiece;
+        this.dropCounter = 0;
+        this.audio.playTone(440, 'sine', 0.05);
     }
 
     _resetLockDelay() {
@@ -547,14 +588,50 @@ export class NeonBlocks {
             });
         }
 
+        // Hold Piece Preview
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = '16px monospace';
+        this.ctx.fillText('HOLD', panelX, 400);
+
+        if (this.holdPiece) {
+            const previewSize = 20;
+            const offsetX = panelX + 10;
+            const offsetY = 415;
+
+            this.ctx.globalAlpha = this.hasHeld ? 0.4 : 1.0;
+            this.holdPiece.matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value !== 0) {
+                        this.ctx.fillStyle = this.holdPiece.color;
+                        this.ctx.shadowBlur = 6;
+                        this.ctx.shadowColor = this.holdPiece.color;
+                        this.ctx.fillRect(
+                            offsetX + x * previewSize,
+                            offsetY + y * previewSize,
+                            previewSize, previewSize
+                        );
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                        this.ctx.lineWidth = 1;
+                        this.ctx.strokeRect(
+                            offsetX + x * previewSize,
+                            offsetY + y * previewSize,
+                            previewSize, previewSize
+                        );
+                    }
+                });
+            });
+            this.ctx.globalAlpha = 1.0;
+        }
+
         // Controls hint
         this.ctx.fillStyle = 'rgba(255,255,255,0.4)';
         this.ctx.font = '10px monospace';
-        this.ctx.fillText('\u2190 \u2192 Move', panelX, 430);
-        this.ctx.fillText('\u2191 Rotate', panelX, 445);
-        this.ctx.fillText('\u2193 Soft Drop', panelX, 460);
-        this.ctx.fillText('SPC Hard Drop', panelX, 475);
-        this.ctx.fillText('ESC Pause', panelX, 490);
+        this.ctx.fillText('\u2190 \u2192 Move', panelX, 530);
+        this.ctx.fillText('\u2191 Rotate', panelX, 545);
+        this.ctx.fillText('\u2193 Soft Drop', panelX, 560);
+        this.ctx.fillText('SPC Hard Drop', panelX, 575);
+        this.ctx.fillText('C Hold', panelX, 590);
     }
 
     drawBlock(x, y, color) {

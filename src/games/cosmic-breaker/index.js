@@ -4,6 +4,7 @@ import { AudioManager } from '../../core/AudioManager.js';
 import { StorageManager } from '../../core/StorageManager.js';
 import { CanvasScaler } from '../../core/CanvasScaler.js';
 import { Levels } from './levels.js';
+import { CONFIG } from './config.js';
 
 export class CosmicBreaker {
     constructor(canvasContainer, onGameOver) {
@@ -14,8 +15,8 @@ export class CosmicBreaker {
         this.storage = new StorageManager();
 
         this.canvas = document.createElement('canvas');
-        this.canvas.width = 800;
-        this.canvas.height = 600;
+        this.canvas.width = CONFIG.CANVAS_WIDTH;
+        this.canvas.height = CONFIG.CANVAS_HEIGHT;
         this.container.appendChild(this.canvas);
         this.ctx = this.canvas.getContext('2d');
 
@@ -40,13 +41,15 @@ export class CosmicBreaker {
             LIFE: { color: '#e74c3c', symbol: 'L', score: 500 }
         };
 
-        this.PADDLE_WIDTH = 120;
-        this.BASE_PADDLE_WIDTH = 120;
-        this.PADDLE_HEIGHT = 20;
-        this.BALL_RADIUS = 8;
-        this.INITIAL_SPEED = 400;
-        this.MAX_SPEED = 800;
-        this.SPEED_INCREMENT = 20;
+        this.PADDLE_WIDTH = CONFIG.PADDLE_WIDTH;
+        this.BASE_PADDLE_WIDTH = CONFIG.PADDLE_WIDTH;
+        this.PADDLE_HEIGHT = CONFIG.PADDLE_HEIGHT;
+        this.BALL_RADIUS = CONFIG.BALL_RADIUS;
+        this.INITIAL_SPEED = CONFIG.INITIAL_SPEED;
+        this.MAX_SPEED = CONFIG.MAX_SPEED;
+        this.SPEED_INCREMENT = CONFIG.SPEED_INCREMENT;
+        this.powerupDropChance = CONFIG.POWERUP_DROP_CHANCE;
+        this.widePaddleTimer = 0;
 
         this.paddle = {
             x: this.width / 2 - this.PADDLE_WIDTH / 2,
@@ -56,6 +59,7 @@ export class CosmicBreaker {
             color: '#00f3ff'
         };
 
+        this.difficultyLoops = 0;
         this.mouseX = this.width / 2;
         this.gameOver = false;
         this.keys = { left: false, right: false };
@@ -99,6 +103,11 @@ export class CosmicBreaker {
         this.score = 0;
         this.lives = 3;
         this.currentLevel = 0;
+        this.difficultyLoops = 0;
+        this.powerupDropChance = CONFIG.POWERUP_DROP_CHANCE;
+        this.INITIAL_SPEED = CONFIG.INITIAL_SPEED;
+        this.MAX_SPEED = CONFIG.MAX_SPEED;
+        this.widePaddleTimer = 0;
         this.mouseX = this.width / 2;
         this.paddle.width = this.BASE_PADDLE_WIDTH;
 
@@ -290,7 +299,7 @@ export class CosmicBreaker {
                         this.createExplosion(brick.x + brick.width / 2, brick.y + brick.height / 2, brick.color);
                         this.shake = 5;
 
-                        if (Math.random() < 0.35) {
+                        if (Math.random() < this.powerupDropChance) {
                             this.spawnPowerUp(brick.x + brick.width / 2, brick.y + brick.height / 2);
                         }
                     } else {
@@ -333,6 +342,16 @@ export class CosmicBreaker {
 
             if (p.y > this.height) {
                 this.powerups.splice(i, 1);
+            }
+        }
+
+        // Wide paddle timer
+        if (this.widePaddleTimer > 0) {
+            this.widePaddleTimer -= dt;
+            if (this.widePaddleTimer <= 0) {
+                this.widePaddleTimer = 0;
+                this.paddle.width = this.BASE_PADDLE_WIDTH;
+                this.paddle.color = '#00f3ff';
             }
         }
 
@@ -393,8 +412,9 @@ export class CosmicBreaker {
                 break;
             }
             case 'WIDE':
-                this.paddle.width = this.BASE_PADDLE_WIDTH * 1.5;
+                this.paddle.width = this.BASE_PADDLE_WIDTH * CONFIG.WIDE_PADDLE_MULTIPLIER;
                 this.paddle.color = this.POWERUP_TYPES.WIDE.color;
+                this.widePaddleTimer = 15; // 15 seconds
                 break;
             case 'LIFE':
                 this.lives++;
@@ -441,6 +461,7 @@ export class CosmicBreaker {
         this.playSound('die');
         this.paddle.width = this.BASE_PADDLE_WIDTH;
         this.paddle.color = '#00f3ff';
+        this.widePaddleTimer = 0;
 
         if (this.lives <= 0) {
             this.gameOver = true;
@@ -454,6 +475,15 @@ export class CosmicBreaker {
     levelComplete() {
         this.playSound('levelup');
         this.currentLevel++;
+
+        // Difficulty scaling when looping through all levels
+        if (this.currentLevel >= Levels.length && this.currentLevel % Levels.length === 0) {
+            this.difficultyLoops++;
+            this.INITIAL_SPEED *= 1.1;
+            this.MAX_SPEED *= 1.1;
+            this.powerupDropChance = Math.max(0.02, this.powerupDropChance - 0.02);
+        }
+
         this.resetBall();
         this.createLevel();
     }

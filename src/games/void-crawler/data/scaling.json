@@ -54,14 +54,15 @@
     "baseDEF": 0,
     "baseSight": 7,
     "baseSpeed": 1,
-    "o2PerTurn": 1,
+    "o2PerTurn": 1.5,
     "o2DepletionDamage": 5
   },
   "credits": {
-    "perMonster": 3,
-    "perElite": 10,
-    "perChampion": 25,
-    "perDeck": 15,
+    "perMonster": 5,
+    "perElite": 15,
+    "perChampion": 35,
+    "perDeck": 25,
+    "minPerRun": 80,
     "salvageEfficiencyMult": 0.2
   },
   "deckGeneration": {

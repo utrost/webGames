@@ -201,6 +201,7 @@ export class ElementalSandbox {
             if (e.code === 'BracketLeft') this.brushSize = Math.max(1, this.brushSize - 1);
             if (e.code === 'BracketRight') this.brushSize = Math.min(10, this.brushSize + 1);
             if (e.code === 'KeyC') this.sim.clear();
+            if (e.code === 'KeyR') this.sim.clear();
             if (e.code === 'Escape') this.paused = !this.paused;
         };
 

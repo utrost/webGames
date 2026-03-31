@@ -107,6 +107,7 @@ export class Asteroids {
 
     spawnShip() {
         this.ship = new Ship(this.width / 2, this.height / 2);
+        this.ship.invincible = 2.0; // 2 seconds of invincibility after respawn
         this.entities.push(this.ship);
     }
 
@@ -210,10 +211,16 @@ export class Asteroids {
         }
 
         if (this.ship && !this.ship.toBeRemoved) {
-            for (const a of asteroids) {
-                if (this.ship.pos.distSq(a.pos) < (this.ship.radius + a.radius) ** 2) {
-                    this.killShip();
-                    break;
+            // Decrement invincibility timer
+            if (this.ship.invincible > 0) this.ship.invincible -= dt;
+
+            // Skip collision while invincible
+            if (!(this.ship.invincible > 0)) {
+                for (const a of asteroids) {
+                    if (this.ship.pos.distSq(a.pos) < (this.ship.radius + a.radius) ** 2) {
+                        this.killShip();
+                        break;
+                    }
                 }
             }
         }

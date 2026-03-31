@@ -97,6 +97,13 @@ export class NeonFlow {
                 this.paused = !this.paused;
                 return;
             }
+            if (e.code === 'KeyR') {
+                this.currentLevelIndex = 0;
+                this.totalMoves = 0;
+                this.stop();
+                this.init();
+                return;
+            }
             if (this.paused) return;
 
             if (e.code === 'ArrowUp') this.cursor.r = Math.max(0, this.cursor.r - 1);

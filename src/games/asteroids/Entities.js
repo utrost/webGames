@@ -33,6 +33,11 @@ export class Ship extends Entity {
     }
 
     render(ctx) {
+        // Blink during invincibility (visible every other 0.1s)
+        if (this.invincible > 0 && Math.floor(this.invincible * 10) % 2 === 0) {
+            return;
+        }
+
         ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
         ctx.rotate(this.rotation);
@@ -43,14 +48,9 @@ export class Ship extends Entity {
         ctx.shadowColor = this.color;
 
         ctx.beginPath();
-        // Triangle pointing right (since 0 rot is right usually, but we init to -PI/2)
-        // Nose
         ctx.moveTo(this.radius, 0);
-        // Rear Left
         ctx.lineTo(-this.radius, -this.radius * 0.7);
-        // Indent
         ctx.lineTo(-this.radius * 0.5, 0);
-        // Rear Right
         ctx.lineTo(-this.radius, this.radius * 0.7);
         ctx.closePath();
         ctx.stroke();

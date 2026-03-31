@@ -24,8 +24,8 @@ export class Player {
     this.weapon = {
       name: 'Wrench',
       atk: 3 + (stats.wrenchBonus || 0),
-      durability: 999,
-      maxDurability: 999,
+      durability: Infinity,
+      maxDurability: Infinity,
       range: 1,
       element: 'kinetic',
       affixes: [],
@@ -92,8 +92,8 @@ export class Player {
     this.weapon = {
       name: 'Wrench',
       atk: 3,
-      durability: 999,
-      maxDurability: 999,
+      durability: Infinity,
+      maxDurability: Infinity,
       range: 1,
       element: 'kinetic',
       affixes: [],

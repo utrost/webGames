@@ -115,6 +115,15 @@ export class ProgressionSystem {
 
   endRun(causeOfDeath) {
     this.runStats.causeOfDeath = causeOfDeath;
+
+    // Ensure minimum credits per run
+    const minCredits = scalingData.credits.minPerRun || 80;
+    if (this.runStats.creditsEarned < minCredits) {
+      const bonus = minCredits - this.runStats.creditsEarned;
+      this.credits += bonus;
+      this.runStats.creditsEarned += bonus;
+    }
+
     // Save high score (decks reached)
     this.storage.saveHighScore('void-crawler', this.runStats.decksReached);
     this.save();

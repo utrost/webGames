@@ -47,9 +47,14 @@ export class CombatSystem {
     let combo = this.checkCombo(defender, element);
     let comboMult = 1;
     if (combo) {
-      comboMult = combo.damageMult || 1;
-      if (combo.name) {
-        this.messageLog?.add(`${combo.name}!`, combo.color || '#ff00ff');
+      // Shatter only triggers on melee attacks (range === 1)
+      if (combo.meleeOnly && weapon?.range > 1) {
+        combo = null;
+      } else {
+        comboMult = combo.damageMult || 1;
+        if (combo.name) {
+          this.messageLog?.add(`${combo.name}!`, combo.color || '#ff00ff');
+        }
       }
     }
 
@@ -68,8 +73,8 @@ export class CombatSystem {
     // Apply status effect
     const statusApplied = this.applyStatusEffect(defender, element);
 
-    // Weapon durability
-    if (weapon && weapon.durability !== undefined) {
+    // Weapon durability (skip for wrench / infinite durability)
+    if (weapon && weapon.durability !== undefined && isFinite(weapon.durability)) {
       weapon.durability--;
       if (weapon.durability <= 0) {
         this.messageLog?.add(`${weapon.name} breaks!`, '#ff0040');
@@ -179,7 +184,7 @@ export class CombatSystem {
       if (element === elem2 || element === elem1) {
         // Check if target has the other element's status
         if (element === 'kinetic' && target.statusEffects.has('freeze')) {
-          return { name: 'Shatter', damageMult: 2.0, color: '#00bfff' };
+          return { name: 'Shatter', damageMult: 1.5, color: '#00bfff', meleeOnly: true };
         }
         if (element === 'acid' && target.statusEffects.has('burn')) {
           return { name: 'Meltdown', damageMult: 1.5, color: '#ff6600' };
