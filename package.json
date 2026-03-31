@@ -18,5 +18,8 @@
     "prettier": "^3.8.1",
     "vite": "^6.0.0",
     "vitest": "^4.1.0"
+  },
+  "dependencies": {
+    "rot-js": "^2.2.1"
   }
 }

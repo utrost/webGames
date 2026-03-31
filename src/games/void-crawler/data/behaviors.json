@@ -1,0 +1,60 @@
+{
+  "patrol": {
+    "name": "Patrol",
+    "description": "Follows a fixed route. Standard for drones.",
+    "detection": "sight",
+    "onDetect": "hunt",
+    "priority": 1
+  },
+  "hunt": {
+    "name": "Hunt",
+    "description": "A* pathfinding to player. Activated by sight/noise.",
+    "detection": "sight",
+    "aggressive": true,
+    "priority": 3
+  },
+  "wander": {
+    "name": "Wander",
+    "description": "Random movement.",
+    "detection": "sight",
+    "onDetect": "hunt",
+    "priority": 0
+  },
+  "lurk": {
+    "name": "Lurk",
+    "description": "Invisible until player in range. Surprise attack.",
+    "detection": "proximity",
+    "detectionRange": 3,
+    "onDetect": "hunt",
+    "priority": 2
+  },
+  "flee": {
+    "name": "Flee",
+    "description": "Moves away from player. At low HP.",
+    "detection": "sight",
+    "hpThreshold": 0.3,
+    "priority": 4
+  },
+  "guard": {
+    "name": "Guard",
+    "description": "Stationary. Attacks at range.",
+    "detection": "proximity",
+    "detectionRange": 5,
+    "aggressive": true,
+    "priority": 2
+  },
+  "support": {
+    "name": "Support",
+    "description": "Buffs/heals other enemies.",
+    "detection": "sight",
+    "onDetect": "flee",
+    "priority": 1
+  },
+  "swarmAI": {
+    "name": "Swarm AI",
+    "description": "Coordinates with same type. Surrounds player.",
+    "detection": "sight",
+    "onDetect": "hunt",
+    "priority": 3
+  }
+}

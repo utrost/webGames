@@ -1,0 +1,128 @@
+{
+  "dtl": {
+    "formula": "deckNumber * (1.0 + modifierBonus)",
+    "modifiers": {
+      "infested": 0.3,
+      "dark": 0.1,
+      "decompressed": 0.2,
+      "flooded": 0.2,
+      "lockdown": 0.1,
+      "overgrown": 0.2,
+      "unstable": 0.3,
+      "hunted": 0.4,
+      "entropy": 0.3,
+      "singularity": 0.5
+    }
+  },
+  "monster": {
+    "hp": { "base": "bodyHP", "formula": "base * (1 + 0.25 * DTL)" },
+    "atk": { "base": "bodyATK", "formula": "base * (1 + 0.20 * DTL)" },
+    "def": { "base": "bodyDEF", "formula": "base + floor(DTL / 3)" },
+    "xp": { "base": "bodyXP", "formula": "base * (1 + 0.15 * DTL)" }
+  },
+  "resistance": {
+    "positiveScaling": 2,
+    "negativeScaling": 1,
+    "cap": 90
+  },
+  "weapon": {
+    "atk": { "formula": "baseATK * (1 + 0.15 * iLvl)" },
+    "durability": { "formula": "baseDur * (1 + 0.10 * iLvl)" },
+    "affixStrength": { "formula": "baseEffect * (1 + 0.20 * iLvl)" }
+  },
+  "armor": {
+    "def": { "formula": "baseDEF * (1 + 0.20 * iLvl)" }
+  },
+  "dropRates": {
+    "1":  { "common": 80, "uncommon": 18, "rare": 2, "epic": 0, "legendary": 0 },
+    "3":  { "common": 60, "uncommon": 28, "rare": 10, "epic": 2, "legendary": 0 },
+    "5":  { "common": 40, "uncommon": 32, "rare": 20, "epic": 7, "legendary": 1 },
+    "7":  { "common": 25, "uncommon": 30, "rare": 28, "epic": 15, "legendary": 2 },
+    "10": { "common": 10, "uncommon": 25, "rare": 30, "epic": 25, "legendary": 10 }
+  },
+  "evolution": {
+    "1": { "behaviors": 1, "minAbilities": 0, "maxAbilities": 1, "elementChance": 0, "eliteChance": 0, "championChance": 0 },
+    "3": { "behaviors": 1, "minAbilities": 0, "maxAbilities": 2, "elementChance": 0.3, "eliteChance": 0.1, "championChance": 0 },
+    "5": { "behaviors": 1, "minAbilities": 1, "maxAbilities": 2, "elementChance": 0.5, "eliteChance": 0.15, "championChance": 0.02 },
+    "7": { "behaviors": 2, "minAbilities": 1, "maxAbilities": 3, "elementChance": 0.7, "eliteChance": 0.2, "championChance": 0.05 },
+    "9": { "behaviors": 2, "minAbilities": 2, "maxAbilities": 3, "elementChance": 0.9, "eliteChance": 0.3, "championChance": 0.1 }
+  },
+  "player": {
+    "baseHP": 100,
+    "baseO2": 200,
+    "baseATK": 5,
+    "baseDEF": 0,
+    "baseSight": 7,
+    "baseSpeed": 1,
+    "o2PerTurn": 1,
+    "o2DepletionDamage": 5
+  },
+  "credits": {
+    "perMonster": 3,
+    "perElite": 10,
+    "perChampion": 25,
+    "perDeck": 15,
+    "salvageEfficiencyMult": 0.2
+  },
+  "deckGeneration": {
+    "minRooms": 5,
+    "maxRooms": 12,
+    "minRoomSize": 4,
+    "maxRoomSize": 10,
+    "monstersPerDeck": { "base": 5, "perDTL": 1.5 },
+    "safeRadius": 3
+  },
+  "weaponBases": {
+    "melee": [
+      { "name": "Wrench", "minILvl": 1, "atk": 3, "durability": 30, "range": 1 },
+      { "name": "Pipe", "minILvl": 1, "atk": 4, "durability": 25, "range": 1 },
+      { "name": "Baton", "minILvl": 1, "atk": 5, "durability": 20, "range": 1 },
+      { "name": "Blade", "minILvl": 3, "atk": 7, "durability": 20, "range": 1 },
+      { "name": "Taser", "minILvl": 3, "atk": 6, "durability": 15, "range": 1, "element": "shock" },
+      { "name": "Plasma Cutter", "minILvl": 5, "atk": 10, "durability": 18, "range": 1, "element": "thermal" },
+      { "name": "Hammer", "minILvl": 5, "atk": 12, "durability": 25, "range": 1 },
+      { "name": "Arc Welder", "minILvl": 7, "atk": 14, "durability": 15, "range": 1, "element": "shock" },
+      { "name": "Chainsaw", "minILvl": 7, "atk": 16, "durability": 12, "range": 1 },
+      { "name": "Void Scythe", "minILvl": 9, "atk": 20, "durability": 20, "range": 1 },
+      { "name": "Singularity Hammer", "minILvl": 9, "atk": 22, "durability": 25, "range": 1 }
+    ],
+    "ranged": [
+      { "name": "Pistol", "minILvl": 3, "atk": 5, "durability": 15, "range": 5 },
+      { "name": "Rifle", "minILvl": 5, "atk": 8, "durability": 12, "range": 7 },
+      { "name": "Shotgun", "minILvl": 5, "atk": 12, "durability": 10, "range": 3 },
+      { "name": "Rail Gun", "minILvl": 7, "atk": 15, "durability": 8, "range": 9 },
+      { "name": "Launcher", "minILvl": 7, "atk": 18, "durability": 6, "range": 6, "aoe": 1 },
+      { "name": "Null Lance", "minILvl": 9, "atk": 22, "durability": 10, "range": 10 }
+    ]
+  },
+  "armorBases": [
+    { "name": "Salvage Suit", "minILvl": 1, "def": 1, "resistances": {} },
+    { "name": "Reinforced Suit", "minILvl": 3, "def": 3, "resistances": {} },
+    { "name": "Hazmat Suit", "minILvl": 3, "def": 2, "resistances": { "acid": 30, "thermal": 20 } },
+    { "name": "Tactical Vest", "minILvl": 5, "def": 4, "resistances": {}, "bonusSlots": 1 },
+    { "name": "Exo-Frame", "minILvl": 5, "def": 5, "resistances": { "kinetic": 20, "shock": 15 }, "o2Mult": 0.8 },
+    { "name": "Combat Plating", "minILvl": 7, "def": 7, "resistances": { "kinetic": 25 } },
+    { "name": "Shield-Belt", "minILvl": 7, "def": 3, "resistances": {}, "emergencyShield": true },
+    { "name": "Void Armor", "minILvl": 9, "def": 10, "resistances": { "kinetic": 10, "thermal": 10, "cryo": 10, "shock": 10, "acid": 10 }, "reflectDamage": 0.2 }
+  ],
+  "consumables": [
+    { "id": "o2Tank", "name": "O2 Tank", "effect": "o2", "value": 50, "stackLimit": 5 },
+    { "id": "medkit", "name": "Medkit", "effect": "heal", "value": 30, "stackLimit": 3 },
+    { "id": "stimPack", "name": "Stim Pack", "effect": "speed", "value": 2, "duration": 5, "stackLimit": 2 },
+    { "id": "flare", "name": "Flare", "effect": "sight", "value": 5, "duration": 10, "stackLimit": 3 },
+    { "id": "empGrenade", "name": "EMP Grenade", "effect": "emp", "radius": 2, "duration": 5, "stackLimit": 2 },
+    { "id": "repairKit", "name": "Repair Kit", "effect": "repair", "value": 5, "stackLimit": 2 }
+  ],
+  "upgrades": [
+    { "id": "reinforcedHull", "name": "Reinforced Hull", "maxLevel": 5, "costs": [50, 100, 200, 400, 800], "effect": "hp", "valuePerLevel": 10 },
+    { "id": "extendedTanks", "name": "Extended Tanks", "maxLevel": 5, "costs": [40, 80, 160, 320, 640], "effect": "o2", "valuePerLevel": 20 },
+    { "id": "combatTraining", "name": "Combat Training", "maxLevel": 3, "costs": [100, 300, 600], "effect": "atk", "valuePerLevel": 2 },
+    { "id": "sensorArray", "name": "Sensor Array", "maxLevel": 3, "costs": [80, 200, 500], "effect": "sight", "valuePerLevel": 1 },
+    { "id": "salvageEfficiency", "name": "Salvage Efficiency", "maxLevel": 3, "costs": [60, 150, 400], "effect": "credits", "valuePerLevel": 0.2 },
+    { "id": "hardenedSuit", "name": "Hardened Suit", "maxLevel": 3, "costs": [120, 300, 750], "effect": "resistance", "valuePerLevel": 10 },
+    { "id": "emergencyStim", "name": "Emergency Stim", "maxLevel": 1, "costs": [500], "effect": "startStim", "valuePerLevel": 1 },
+    { "id": "quickReflexes", "name": "Quick Reflexes", "maxLevel": 1, "costs": [1000], "effect": "dodge", "valuePerLevel": 15 },
+    { "id": "deepScanner", "name": "Deep Scanner", "maxLevel": 1, "costs": [750], "effect": "revealElevator", "valuePerLevel": 1 },
+    { "id": "heirloomWrench", "name": "Heirloom Wrench", "maxLevel": 1, "costs": [300], "effect": "wrenchAtk", "valuePerLevel": 3 }
+  ]
+}

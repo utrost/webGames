@@ -1,0 +1,48 @@
+{
+  "prefixes": {
+    "weapon": [
+      { "name": "Reinforced", "minILvl": 1, "tier": "base", "effect": "durability", "value": 1.5 },
+      { "name": "Sharp", "minILvl": 1, "tier": "base", "effect": "atk", "value": 1.2 },
+      { "name": "Silent", "minILvl": 1, "tier": "base", "effect": "silent", "value": true },
+      { "name": "Searing", "minILvl": 3, "tier": "elemental", "effect": "element", "element": "thermal", "value": 0.2 },
+      { "name": "Cryo", "minILvl": 3, "tier": "elemental", "effect": "element", "element": "cryo", "value": 0.2 },
+      { "name": "Shocking", "minILvl": 3, "tier": "elemental", "effect": "element", "element": "shock", "value": 0.2 },
+      { "name": "Corrosive", "minILvl": 3, "tier": "elemental", "effect": "element", "element": "acid", "value": 0.2 },
+      { "name": "Vampiric", "minILvl": 5, "tier": "advanced", "effect": "lifesteal", "value": 0.15 },
+      { "name": "Adaptive", "minILvl": 5, "tier": "advanced", "effect": "scalingDef", "value": 0.1 },
+      { "name": "Piercing", "minILvl": 5, "tier": "advanced", "effect": "ignoreDef", "value": 0.5 },
+      { "name": "Phase-Shift", "minILvl": 7, "tier": "rare", "effect": "teleportOnKill", "value": true },
+      { "name": "Nanite", "minILvl": 7, "tier": "rare", "effect": "selfHeal", "value": 2 },
+      { "name": "Void-Touched", "minILvl": 9, "tier": "legendary", "effect": "o2Scaling", "value": 0.5 },
+      { "name": "Sentient", "minILvl": 9, "tier": "legendary", "effect": "killScaling", "value": 0.02 }
+    ],
+    "armor": [
+      { "name": "Reinforced", "minILvl": 1, "tier": "base", "effect": "def", "value": 1.2 },
+      { "name": "Padded", "minILvl": 1, "tier": "base", "effect": "hp", "value": 10 },
+      { "name": "Fireproof", "minILvl": 3, "tier": "elemental", "effect": "resistance", "element": "thermal", "value": 15 },
+      { "name": "Insulated", "minILvl": 3, "tier": "elemental", "effect": "resistance", "element": "cryo", "value": 15 },
+      { "name": "Grounded", "minILvl": 3, "tier": "elemental", "effect": "resistance", "element": "shock", "value": 15 },
+      { "name": "Sealed", "minILvl": 3, "tier": "elemental", "effect": "resistance", "element": "acid", "value": 15 },
+      { "name": "Regenerative", "minILvl": 5, "tier": "advanced", "effect": "regen", "value": 1 },
+      { "name": "Thorned", "minILvl": 5, "tier": "advanced", "effect": "thorns", "value": 3 },
+      { "name": "Cloaking", "minILvl": 7, "tier": "rare", "effect": "stealth", "value": 3 },
+      { "name": "Shielded", "minILvl": 7, "tier": "rare", "effect": "emergencyShield", "value": 1 }
+    ]
+  },
+  "suffixes": {
+    "weapon": [
+      { "name": "of Endurance", "minILvl": 1, "effect": "durability", "value": 1.3 },
+      { "name": "of Haste", "minILvl": 3, "effect": "speedBonus", "value": 1 },
+      { "name": "of the Void", "minILvl": 5, "effect": "critChance", "value": 0.1 },
+      { "name": "of Devastation", "minILvl": 7, "effect": "atk", "value": 1.4 },
+      { "name": "of Phase-Shift", "minILvl": 7, "effect": "teleportOnKill", "value": true }
+    ],
+    "armor": [
+      { "name": "of the Survivor", "minILvl": 1, "effect": "hp", "value": 15 },
+      { "name": "of Agility", "minILvl": 3, "effect": "dodge", "value": 5 },
+      { "name": "of Magnetism", "minILvl": 5, "effect": "lootRadius", "value": 2 },
+      { "name": "of Vitality", "minILvl": 7, "effect": "regen", "value": 2 },
+      { "name": "of the Phoenix", "minILvl": 9, "effect": "emergencyShield", "value": 2 }
+    ]
+  }
+}

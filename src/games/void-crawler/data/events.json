@@ -1,0 +1,107 @@
+[
+  {
+    "id": "survivor",
+    "name": "Survivor",
+    "type": "npc",
+    "description": "A fellow salvage operator, barely alive.",
+    "choices": [
+      { "label": "Trade", "effect": "trade", "cost": null },
+      { "label": "Leave", "effect": "none" }
+    ],
+    "rewards": { "type": "trade" },
+    "minDeck": 1
+  },
+  {
+    "id": "replicator",
+    "name": "Damaged Replicator",
+    "type": "gamble",
+    "description": "A replicator sparks and whirs. Tempting...",
+    "choices": [
+      { "label": "Use it", "effect": "gamble", "successRate": 0.6, "success": "randomItem", "failure": "damage", "failDamage": 15 },
+      { "label": "Walk away", "effect": "none" }
+    ],
+    "minDeck": 1
+  },
+  {
+    "id": "securityTerminal",
+    "name": "Security Terminal",
+    "type": "info",
+    "description": "A flickering terminal shows security feeds.",
+    "choices": [
+      { "label": "Access", "effect": "revealEnemies", "duration": 20 }
+    ],
+    "minDeck": 2
+  },
+  {
+    "id": "medStation",
+    "name": "Medical Station",
+    "type": "buff",
+    "description": "An emergency medical station, still functional.",
+    "choices": [
+      { "label": "Use", "effect": "resistBuff", "value": 15, "duration": "deck" }
+    ],
+    "minDeck": 2
+  },
+  {
+    "id": "armory",
+    "name": "Armory",
+    "type": "loot",
+    "description": "A locked weapons cache. Jackpot.",
+    "choices": [
+      { "label": "Open", "effect": "weaponChoice", "count": 3, "rarityBonus": 1 }
+    ],
+    "minDeck": 3
+  },
+  {
+    "id": "cryoChamber",
+    "name": "Cryo Chamber",
+    "type": "riskReward",
+    "description": "A working cryo pod. Quick nap?",
+    "choices": [
+      { "label": "Enter", "effect": "fullHeal", "o2Cost": 30 },
+      { "label": "Pass", "effect": "none" }
+    ],
+    "minDeck": 3
+  },
+  {
+    "id": "researchLog",
+    "name": "Research Log",
+    "type": "lore",
+    "description": "A data pad with partial logs...",
+    "choices": [
+      { "label": "Read", "effect": "lore", "xp": 5 }
+    ],
+    "minDeck": 1
+  },
+  {
+    "id": "anomaly",
+    "name": "Anomaly",
+    "type": "chaos",
+    "description": "Reality warps before you. Something is wrong.",
+    "choices": [
+      { "label": "Touch it", "effect": "randomBuff", "debuffChance": 0.4 },
+      { "label": "Avoid", "effect": "none" }
+    ],
+    "minDeck": 4
+  },
+  {
+    "id": "airlockTrap",
+    "name": "Defective Airlock",
+    "type": "timer",
+    "description": "Warning: airlock cycling. Pressure dropping.",
+    "choices": [
+      { "label": "Run!", "effect": "escape", "turns": 5, "failEffect": "o2Loss", "failValue": 40 }
+    ],
+    "minDeck": 3
+  },
+  {
+    "id": "ventilationStation",
+    "name": "Ventilation Station",
+    "type": "buff",
+    "description": "Fresh air flows from a vent.",
+    "choices": [
+      { "label": "Breathe", "effect": "o2Restore", "value": 30 }
+    ],
+    "minDeck": 1
+  }
+]

@@ -5,6 +5,7 @@ import { Orbit } from './games/orbit/index.js';
 import { Asteroids } from './games/asteroids/index.js';
 import { NeonBlocks } from './games/neon-blocks/index.js';
 import { ElementalSandbox } from './games/elemental-sandbox/index.js';
+import { VoidCrawler } from './games/void-crawler/index.js';
 import { StorageManager } from './core/StorageManager.js';
 import { AudioManager } from './core/AudioManager.js';
 import { StatsTracker } from './core/StatsTracker.js';
@@ -36,7 +37,8 @@ const games = [
     { id: 'orbit', title: 'Orbit', description: 'Sling counter-bodies to keep planets in stable orbits.', genre: 'Physics', icon: '&#9788;', color: '#ffaa00', class: Orbit },
     { id: 'asteroids', title: 'Asteroids', description: 'Pilot a neon ship through endless asteroid waves.', genre: 'Shooter', icon: '&#9733;', color: '#00f3ff', class: Asteroids },
     { id: 'neon-blocks', title: 'Neon Blocks', description: 'Stack glowing tetrominoes — clear lines, climb levels.', genre: 'Puzzle', icon: '&#9642;', color: '#ff3366', class: NeonBlocks },
-    { id: 'elemental-sandbox', title: 'Elemental Sandbox', description: 'Paint with sand, water, fire, and acid in a pixel physics sim.', genre: 'Sandbox', icon: '&#9883;', color: '#ffff00', class: ElementalSandbox }
+    { id: 'elemental-sandbox', title: 'Elemental Sandbox', description: 'Paint with sand, water, fire, and acid in a pixel physics sim.', genre: 'Sandbox', icon: '&#9883;', color: '#ffff00', class: ElementalSandbox },
+    { id: 'void-crawler', title: 'Void Crawler', description: 'Roguelite sci-fi horror. Explore EREBUS-7, fight generated monsters, descend 10 decks.', genre: 'Roguelite', icon: '&#9760;', color: '#39ff14', class: VoidCrawler }
 ];
 
 // Achievements system

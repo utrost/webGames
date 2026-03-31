@@ -1,0 +1,68 @@
+{
+  "insectoid": {
+    "name": "Insectoid",
+    "hp": 12,
+    "atk": 4,
+    "def": 1,
+    "xp": 8,
+    "speed": 2,
+    "role": "Fast DPS",
+    "glyph": "i",
+    "resistances": { "kinetic": 0, "thermal": -20, "cryo": 10, "shock": 0, "acid": 50 }
+  },
+  "humanoid": {
+    "name": "Humanoid",
+    "hp": 20,
+    "atk": 5,
+    "def": 2,
+    "xp": 12,
+    "speed": 1,
+    "role": "Allrounder",
+    "glyph": "h",
+    "resistances": { "kinetic": 0, "thermal": 0, "cryo": 0, "shock": 0, "acid": 0 }
+  },
+  "drone": {
+    "name": "Drone",
+    "hp": 15,
+    "atk": 6,
+    "def": 3,
+    "xp": 15,
+    "speed": 1,
+    "role": "Ranged/Patrol",
+    "glyph": "d",
+    "resistances": { "kinetic": 20, "thermal": 0, "cryo": 0, "shock": -30, "acid": 10 }
+  },
+  "amorphous": {
+    "name": "Amorphous Mass",
+    "hp": 30,
+    "atk": 3,
+    "def": 0,
+    "xp": 18,
+    "speed": 0,
+    "role": "Tank",
+    "glyph": "a",
+    "resistances": { "kinetic": 40, "thermal": -30, "cryo": 30, "shock": 10, "acid": -20 }
+  },
+  "parasite": {
+    "name": "Parasite",
+    "hp": 8,
+    "atk": 3,
+    "def": 0,
+    "xp": 10,
+    "speed": 2,
+    "role": "Debuffer",
+    "glyph": "p",
+    "resistances": { "kinetic": 0, "thermal": -20, "cryo": -20, "shock": 0, "acid": 20 }
+  },
+  "swarm": {
+    "name": "Swarm",
+    "hp": 6,
+    "atk": 2,
+    "def": 0,
+    "xp": 4,
+    "speed": 2,
+    "role": "Swarm",
+    "glyph": "s",
+    "resistances": { "kinetic": -20, "thermal": -30, "cryo": 10, "shock": -30, "acid": 0 }
+  }
+}

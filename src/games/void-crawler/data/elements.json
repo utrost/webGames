@@ -1,0 +1,65 @@
+{
+  "kinetic": {
+    "name": "Kinetic",
+    "symbol": "K",
+    "color": "#cccccc",
+    "statusEffect": null
+  },
+  "thermal": {
+    "name": "Thermal",
+    "symbol": "F",
+    "color": "#ff6600",
+    "statusEffect": {
+      "name": "Burn",
+      "damage": 2,
+      "duration": 3,
+      "stacks": false,
+      "refreshes": true
+    }
+  },
+  "cryo": {
+    "name": "Cryo",
+    "symbol": "C",
+    "color": "#00bfff",
+    "statusEffect": {
+      "name": "Chill",
+      "speedMult": 0.5,
+      "duration": 3,
+      "stacks": true,
+      "maxStacks": 2,
+      "onMaxStack": { "name": "Freeze", "stun": true, "duration": 1 }
+    }
+  },
+  "shock": {
+    "name": "Shock",
+    "symbol": "S",
+    "color": "#ffe100",
+    "statusEffect": {
+      "name": "Overload",
+      "nextHitBonus": 0.3,
+      "chainChance": 0.5,
+      "chainRange": 1,
+      "duration": 1
+    }
+  },
+  "acid": {
+    "name": "Acid",
+    "symbol": "A",
+    "color": "#00ff00",
+    "statusEffect": {
+      "name": "Corrode",
+      "defReduction": 2,
+      "duration": 5,
+      "stacks": true,
+      "maxStacks": 5,
+      "durabilityMult": 2
+    }
+  },
+  "combos": [
+    { "id": "meltdown", "name": "Meltdown", "elements": ["thermal", "acid"], "effect": "aoe", "damageMult": 0.5, "radius": 1 },
+    { "id": "shatter", "name": "Shatter", "elements": ["cryo", "kinetic"], "effect": "criticalHit", "damageMult": 2.0, "endsFreeze": true },
+    { "id": "empSurge", "name": "EMP Surge", "elements": ["shock", "shock"], "effect": "disable", "radius": 2, "duration": 3, "targets": ["drone"] },
+    { "id": "flashFreeze", "name": "Flash Freeze", "elements": ["cryo", "cryo"], "effect": "longFreeze", "duration": 3 },
+    { "id": "toxicCloud", "name": "Toxic Cloud", "elements": ["thermal", "acid"], "effect": "cloud", "radius": 1, "duration": 3, "blocksSight": true }
+  ]
+}

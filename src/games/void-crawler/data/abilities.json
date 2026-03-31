@@ -1,0 +1,82 @@
+{
+  "acidTrail": {
+    "name": "Acid Trail",
+    "type": "passive",
+    "element": "acid",
+    "scaling": [
+      { "minDTL": 1, "damage": 1, "length": 1, "duration": 5 },
+      { "minDTL": 4, "damage": 2, "length": 3, "duration": 8 },
+      { "minDTL": 7, "damage": 3, "length": 5, "duration": 10 }
+    ]
+  },
+  "teleport": {
+    "name": "Teleport",
+    "type": "active",
+    "element": null,
+    "scaling": [
+      { "minDTL": 1, "cooldown": 8, "attackAfter": false },
+      { "minDTL": 4, "cooldown": 5, "attackAfter": false },
+      { "minDTL": 7, "cooldown": 3, "attackAfter": true }
+    ]
+  },
+  "selfDestruct": {
+    "name": "Self-Destruct",
+    "type": "active",
+    "element": "thermal",
+    "scaling": [
+      { "minDTL": 1, "radius": 1, "damage": 10 },
+      { "minDTL": 4, "radius": 2, "damage": 20 },
+      { "minDTL": 7, "radius": 2, "damage": 30, "statusEffect": true }
+    ]
+  },
+  "shield": {
+    "name": "Shield",
+    "type": "passive",
+    "element": null,
+    "scaling": [
+      { "minDTL": 1, "absorb": 10, "regen": false, "reflect": 0 },
+      { "minDTL": 4, "absorb": 20, "regen": true, "reflect": 0 },
+      { "minDTL": 7, "absorb": 30, "regen": true, "reflect": 0.2 }
+    ]
+  },
+  "spawn": {
+    "name": "Spawn",
+    "type": "active",
+    "element": null,
+    "scaling": [
+      { "minDTL": 1, "count": 1, "maxActive": 2, "mutated": false },
+      { "minDTL": 4, "count": 2, "maxActive": 4, "mutated": false },
+      { "minDTL": 7, "count": 3, "maxActive": 6, "mutated": true }
+    ]
+  },
+  "buffAura": {
+    "name": "Buff Aura",
+    "type": "passive",
+    "element": null,
+    "scaling": [
+      { "minDTL": 1, "atkBonus": 2, "defBonus": 0, "regen": 0 },
+      { "minDTL": 4, "atkBonus": 3, "defBonus": 1, "regen": 0 },
+      { "minDTL": 7, "atkBonus": 5, "defBonus": 2, "regen": 1 }
+    ]
+  },
+  "ranged": {
+    "name": "Ranged Attack",
+    "type": "active",
+    "element": null,
+    "scaling": [
+      { "minDTL": 1, "range": 3, "damage": 3, "piercing": false, "chain": 0 },
+      { "minDTL": 4, "range": 5, "damage": 4, "piercing": true, "chain": 0 },
+      { "minDTL": 7, "range": 7, "damage": 5, "piercing": true, "chain": 1 }
+    ]
+  },
+  "regeneration": {
+    "name": "Regeneration",
+    "type": "passive",
+    "element": null,
+    "scaling": [
+      { "minDTL": 1, "hpPerTurn": 1, "healNeighbors": false },
+      { "minDTL": 4, "hpPerTurn": 2, "healNeighbors": false },
+      { "minDTL": 7, "hpPerTurn": 3, "healNeighbors": true }
+    ]
+  }
+}
