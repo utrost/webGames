@@ -170,9 +170,9 @@ export class CosmicBreaker {
         const map = levelData.map;
         const rows = map.length;
         const cols = map[0].length;
-        const padding = 10;
+        const padding = CONFIG.BRICK_PADDING;
         const brickWidth = (this.width - (cols + 1) * padding) / cols;
-        const brickHeight = 25;
+        const brickHeight = CONFIG.BRICK_HEIGHT;
 
         const brickTypes = [
             null,
@@ -383,7 +383,7 @@ export class CosmicBreaker {
         this.powerups.push({
             x, y,
             width: 30, height: 15,
-            dy: 150,
+            dy: CONFIG.POWERUP_FALL_SPEED,
             type: typeKey,
             color: type.color,
             symbol: type.symbol,

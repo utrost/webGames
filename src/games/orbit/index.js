@@ -82,7 +82,7 @@ export class Orbit {
         for (const b of this.bodies) {
             if (b.type === 'Projectile') {
                 b.life = (b.life || 0) + simDt;
-                if (b.life >= 5) b.toBeRemoved = true;
+                if (b.life > 8) b.toBeRemoved = true;
             }
         }
 
