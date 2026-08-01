@@ -6,8 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- Split Void Crawler into its own standalone repository: https://github.com/utrost/void-crawler
+- Web Games Arcade is again focused on the six compact arcade cartridges.
+
 ### Added
-- Comprehensive test suite: 162 tests across 13 test files
+- Comprehensive test suite: 214 tests across 18 test files
   - Core engine tests: GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker
   - Game logic tests: Asteroids Entities, Cosmic Breaker levels/config, Neon Blocks Shapes, Orbit Physics/Entities, Elemental Sandbox Simulation/Elements
 - Testing section in README with full test coverage table

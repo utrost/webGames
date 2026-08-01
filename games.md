@@ -1,6 +1,8 @@
 # 🎮 Game Library & Status
 
-This document tracks the current implementation status of all games in the Web Games Arcade project.
+This document tracks the current implementation status of the six compact games in the Web Games Arcade project.
+
+Void Crawler has moved to its own standalone repository: [utrost/void-crawler](https://github.com/utrost/void-crawler).
 
 ## 📊 Summary
 

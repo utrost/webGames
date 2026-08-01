@@ -2,7 +2,9 @@
 
 🎮 **[Play now → simiono.com/games/](https://simiono.com/games/)** | [GitHub Pages Mirror](https://utrost.github.io/webGames/)
 
-A collection of browser-based games built with vanilla JavaScript and HTML5 Canvas. Neon-retro aesthetic, no frameworks, minimal dependencies.
+A collection of six browser-based games built with vanilla JavaScript and HTML5 Canvas. Neon-retro aesthetic, no frameworks, minimal dependencies.
+
+**Note:** Void Crawler has been split into its own standalone repository: [utrost/void-crawler](https://github.com/utrost/void-crawler).
 
 ## Games
 
@@ -83,24 +85,11 @@ npm test              # Run all tests once
 npm run test:watch    # Run tests in watch mode
 ```
 
-**Test coverage:**
+**Test coverage:** 214 tests across 18 test files covering the shared core, responsive layout contract, and all six game cartridges.
 
-| Area | Test File | Tests |
-|---|---|---|
-| Core: Vector2 | `src/core/__tests__/Vector2.test.js` | 16 |
-| Core: StorageManager | `src/core/__tests__/StorageManager.test.js` | 7 |
-| Core: GameLoop | `src/core/__tests__/GameLoop.test.js` | 6 |
-| Core: StateMachine | `src/core/__tests__/StateMachine.test.js` | 12 |
-| Core: ParticleSystem | `src/core/__tests__/ParticleSystem.test.js` | 13 |
-| Core: PerfMonitor | `src/core/__tests__/PerfMonitor.test.js` | 6 |
-| Core: StatsTracker | `src/core/__tests__/StatsTracker.test.js` | 8 |
-| Asteroids: Entities | `src/games/asteroids/__tests__/Entities.test.js` | 13 |
-| Cosmic Breaker: Levels | `src/games/cosmic-breaker/__tests__/levels.test.js` | 10 |
-| Neon Blocks: Shapes | `src/games/neon-blocks/__tests__/Shapes.test.js` | 12 |
-| Neon Flow: Logic | `src/games/neon-flow/__tests__/Logic.test.js` | 19 |
-| Orbit: Physics | `src/games/orbit/__tests__/Physics.test.js` | 14 |
-| Elemental Sandbox: Sim | `src/games/elemental-sandbox/__tests__/Simulation.test.js` | 23 |
-| **Total** | | **162** |
+Key areas:
+- Core: Vector2, StorageManager, GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker, InputManager, AudioManager, CanvasScaler, ResponsiveLayout
+- Games: Asteroids entities, Cosmic Breaker levels, Neon Blocks shapes/gameplay, Neon Flow logic, Orbit physics, Elemental Sandbox simulation
 
 ## Prerequisites
 
