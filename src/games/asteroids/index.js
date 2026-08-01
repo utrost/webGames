@@ -24,18 +24,23 @@ export class Asteroids {
         this.highScore = this.storage.getHighScore('asteroids');
     }
 
-    init() {
+    resetGameState() {
         this.score = 0;
         this.lives = 3;
         this.gameOver = false;
         this.paused = false;
         this.shootCooldown = 0;
+        this.respawnTimer = 0;
 
         this.entities = [];
         this.asteroids = [];
 
         this.spawnShip();
         this.nextWave(3);
+    }
+
+    init() {
+        this.resetGameState();
 
         this.keys = {};
         this.binds = {
@@ -142,8 +147,8 @@ export class Asteroids {
 
     update(dt) {
         if (this.gameOver && this.keys['KeyR']) {
-            this.stop();
-            this.init();
+            this.resetGameState();
+            this.keys['KeyR'] = false;
             return;
         }
         if (this.gameOver || this.paused) return;

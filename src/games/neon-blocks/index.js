@@ -33,7 +33,7 @@ export class NeonBlocks {
         this.highScore = this.storage.getHighScore('neon-blocks');
     }
 
-    init() {
+    resetGameState() {
         this.grid = Array.from({ length: this.rows }, () => Array(this.cols).fill(null));
 
         this.score = 0;
@@ -46,15 +46,10 @@ export class NeonBlocks {
         this.particles = [];
         this.levelUpFlash = 0;
 
-        // Lock delay state
         this.lockTimer = 0;
         this.lockResets = 0;
         this.isLanding = false;
-
-        // 7-bag randomizer
         this.bag = [];
-
-        // Hold piece
         this.holdPiece = null;
         this.hasHeld = false;
 
@@ -66,6 +61,10 @@ export class NeonBlocks {
 
         this.nextPiece = this._pullFromBag();
         this.resetPiece();
+    }
+
+    init() {
+        this.resetGameState();
 
         this.handleKey = (e) => {
             if (e.code === 'Escape') {
@@ -73,8 +72,7 @@ export class NeonBlocks {
                 return;
             }
             if (this.gameOver && e.code === 'KeyR') {
-                this.stop();
-                this.init();
+                this.resetGameState();
                 return;
             }
             if (this.gameOver || this.paused) return;

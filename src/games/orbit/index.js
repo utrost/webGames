@@ -28,7 +28,7 @@ export class Orbit {
         this.highScore = this.storage.getHighScore('orbit');
     }
 
-    init() {
+    resetGameState() {
         this.score = 0;
         this.gameOver = false;
         this.waveTimer = 0;
@@ -47,6 +47,10 @@ export class Orbit {
         const planet = new Planet(this.width / 2 + 200, this.height / 2);
         planet.setVelocity(new Vector2(0, 5));
         this.bodies.push(planet);
+    }
+
+    init() {
+        this.resetGameState();
 
         this.setupInput();
 
@@ -263,8 +267,7 @@ export class Orbit {
                 this.paused = !this.paused;
             }
             if (this.gameOver && e.code === 'KeyR') {
-                this.stop();
-                this.init();
+                this.resetGameState();
             }
         };
 

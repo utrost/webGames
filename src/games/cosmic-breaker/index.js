@@ -97,8 +97,9 @@ export class CosmicBreaker {
         };
     }
 
-    init() {
+    resetGameState() {
         this.gameOver = false;
+        this.paused = false;
         this.keys = { left: false, right: false };
         this.score = 0;
         this.lives = 3;
@@ -110,6 +111,12 @@ export class CosmicBreaker {
         this.widePaddleTimer = 0;
         this.mouseX = this.width / 2;
         this.paddle.width = this.BASE_PADDLE_WIDTH;
+        this.createLevel();
+        this.resetBall();
+    }
+
+    init() {
+        this.resetGameState();
 
         window.addEventListener('mousemove', this.inputHandler);
         this.canvas.addEventListener('pointerdown', this.clickHandler);
@@ -129,8 +136,7 @@ export class CosmicBreaker {
                 }
             }
             if (this.gameOver && e.code === 'KeyR') {
-                this.stop();
-                this.init();
+                this.resetGameState();
             }
         };
         this.handleKeyUp = (e) => {
@@ -139,9 +145,6 @@ export class CosmicBreaker {
         };
         window.addEventListener('keydown', this.handleKey);
         window.addEventListener('keyup', this.handleKeyUp);
-
-        this.createLevel();
-        this.resetBall();
 
         this.loop = new GameLoop(
             (dt) => this.update(dt),

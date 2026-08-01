@@ -83,10 +83,17 @@ export class NeonFlow {
         };
     }
 
-    init() {
+    resetGameState() {
+        this.currentLevelIndex = 0;
+        this.totalMoves = 0;
+        this.paused = false;
         this.particles = [];
         this.moves = 0;
         this.loadLevel(this.currentLevelIndex);
+    }
+
+    init() {
+        this.resetGameState();
 
         window.addEventListener('pointermove', this.inputHandler);
         this.canvas.addEventListener('pointerdown', this.clickHandler);
@@ -98,10 +105,8 @@ export class NeonFlow {
                 return;
             }
             if (e.code === 'KeyR') {
-                this.currentLevelIndex = 0;
-                this.totalMoves = 0;
-                this.stop();
-                this.init();
+                this.clearLevelAdvanceTimer();
+                this.resetGameState();
                 return;
             }
             if (this.paused) return;
@@ -151,7 +156,14 @@ export class NeonFlow {
         this.grid.calculateFlow();
     }
 
+    clearLevelAdvanceTimer() {
+        if (!this.levelAdvanceTimer) return;
+        clearTimeout(this.levelAdvanceTimer);
+        this.levelAdvanceTimer = null;
+    }
+
     stop() {
+        this.clearLevelAdvanceTimer();
         this.loop.stop();
         this.scaler.destroy();
         this.isRunning = false;
@@ -397,7 +409,10 @@ export class NeonFlow {
                 this.audio.playTone(880, 'triangle', 0.3);
                 this.audio.playTone(1100, 'triangle', 0.3);
 
-                setTimeout(() => {
+                this.clearLevelAdvanceTimer();
+                this.levelAdvanceTimer = setTimeout(() => {
+                    if (!this.isRunning) return;
+                    this.levelAdvanceTimer = null;
                     this.currentLevelIndex++;
                     if (this.currentLevelIndex >= Levels.length) {
                         this.storage.saveHighScore('neon-flow', this.totalMoves);
