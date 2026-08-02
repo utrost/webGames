@@ -56,7 +56,7 @@ export class Asteroids {
         window.addEventListener('keydown', this.binds.down);
         window.addEventListener('keyup', this.binds.up);
 
-        // Touch controls
+        // Touch + mouse controls
         this.touchState = { left: false, right: false, thrust: false, fire: false };
         this.setupTouchControls();
 
@@ -69,6 +69,7 @@ export class Asteroids {
 
     setupTouchControls() {
         this.touchRegions = [];
+        this.pointerActive = false;
         this.handleTouchStart = (e) => {
             e.preventDefault();
             this.processTouches(e.touches);
@@ -85,15 +86,42 @@ export class Asteroids {
         this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
         this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
         this.canvas.addEventListener('touchend', this.handleTouchEnd, { passive: false });
+
+        this.handlePointerDown = (e) => {
+            e.preventDefault();
+            this.pointerActive = true;
+            this.processPointerControl(e);
+        };
+        this.handlePointerMove = (e) => {
+            if (!this.pointerActive) return;
+            e.preventDefault();
+            this.processPointerControl(e);
+        };
+        this.handlePointerUp = (e) => {
+            e.preventDefault();
+            this.pointerActive = false;
+            this.touchState = { left: false, right: false, thrust: false, fire: false };
+        };
+        this.canvas.addEventListener('mousedown', this.handlePointerDown);
+        window.addEventListener('mousemove', this.handlePointerMove);
+        window.addEventListener('mouseup', this.handlePointerUp);
     }
 
     processTouches(touches) {
+        this.processControlPoints(Array.from(touches));
+    }
+
+    processPointerControl(point) {
+        this.processControlPoints([point]);
+    }
+
+    processControlPoints(points) {
         this.touchState = { left: false, right: false, thrust: false, fire: false };
         const rect = this.canvas.getBoundingClientRect();
 
-        for (let i = 0; i < touches.length; i++) {
-            const tx = (touches[i].clientX - rect.left) / rect.width;
-            const ty = (touches[i].clientY - rect.top) / rect.height;
+        for (const point of points) {
+            const tx = (point.clientX - rect.left) / rect.width;
+            const ty = (point.clientY - rect.top) / rect.height;
 
             // Left side = rotate left/right, right side = thrust/fire
             if (tx < 0.33) this.touchState.left = true;
@@ -143,6 +171,9 @@ export class Asteroids {
         this.canvas.removeEventListener('touchstart', this.handleTouchStart);
         this.canvas.removeEventListener('touchmove', this.handleTouchMove);
         this.canvas.removeEventListener('touchend', this.handleTouchEnd);
+        this.canvas.removeEventListener('mousedown', this.handlePointerDown);
+        window.removeEventListener('mousemove', this.handlePointerMove);
+        window.removeEventListener('mouseup', this.handlePointerUp);
     }
 
     update(dt) {

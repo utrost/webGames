@@ -200,6 +200,14 @@ export class ElementalSandbox {
             }
             if (e.code === 'BracketLeft') this.brushSize = Math.max(1, this.brushSize - 1);
             if (e.code === 'BracketRight') this.brushSize = Math.min(10, this.brushSize + 1);
+            if (e.code === 'ArrowLeft') { e.preventDefault(); this.drawX = Math.max(0, this.drawX - 1); }
+            if (e.code === 'ArrowRight') { e.preventDefault(); this.drawX = Math.min(this.simWidth - 1, this.drawX + 1); }
+            if (e.code === 'ArrowUp') { e.preventDefault(); this.drawY = Math.max(0, this.drawY - 1); }
+            if (e.code === 'ArrowDown') { e.preventDefault(); this.drawY = Math.min(this.simHeight - 1, this.drawY + 1); }
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                this.paint(this.drawX, this.drawY, { force: true });
+            }
             if (e.code === 'KeyC') this.sim.clear();
             if (e.code === 'KeyR') this.sim.clear();
             if (e.code === 'Escape') this.paused = !this.paused;
@@ -214,7 +222,7 @@ export class ElementalSandbox {
         window.addEventListener('keydown', this.handleKey);
     }
 
-    paint(cx, cy) {
+    paint(cx, cy, { force = false } = {}) {
         const r = this.brushSize;
         for (let dy = -r; dy <= r; dy++) {
             for (let dx = -r; dx <= r; dx++) {
@@ -225,8 +233,8 @@ export class ElementalSandbox {
                         if (this.selectedElement === ELEMENTS.EMPTY) {
                             this.sim.set(nx, ny, ELEMENTS.EMPTY);
                         } else if (this.sim.isEmpty(nx, ny)) {
-                            // Small random chance to skip for natural look
-                            if (Math.random() < 0.7) {
+                            // Small random chance to skip for natural look, except discrete keyboard paints.
+                            if (force || Math.random() < 0.7) {
                                 this.sim.set(nx, ny, this.selectedElement);
                             }
                         }

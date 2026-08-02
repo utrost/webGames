@@ -86,6 +86,8 @@ export class NeonBlocks {
         };
         globalThis.addEventListener('keydown', this.handleKey);
 
+        this.setupPointerControls();
+
         // Touch controls
         this.touchStartX = 0;
         this.touchStartY = 0;
@@ -107,15 +109,7 @@ export class NeonBlocks {
             const dy = touch.clientY - this.touchStartY;
             const dt = Date.now() - this.touchStartTime;
 
-            if (Math.abs(dx) < CONFIG.TOUCH_TAP_THRESHOLD && Math.abs(dy) < CONFIG.TOUCH_TAP_THRESHOLD && dt < CONFIG.TOUCH_TAP_TIME) {
-                this.playerRotate(1);
-            } else if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx > CONFIG.SWIPE_THRESHOLD) this.playerMove(1);
-                else if (dx < -CONFIG.SWIPE_THRESHOLD) this.playerMove(-1);
-            } else {
-                if (dy > CONFIG.HARD_DROP_THRESHOLD) this.playerHardDrop();
-                else if (dy > CONFIG.TOUCH_TAP_THRESHOLD) this.playerDrop();
-            }
+            this.handleGesture(dx, dy, dt);
         };
 
         this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
@@ -126,6 +120,48 @@ export class NeonBlocks {
             () => this.render()
         );
         this.loop.start();
+    }
+
+    setupPointerControls() {
+        this.pointerStartX = 0;
+        this.pointerStartY = 0;
+        this.pointerStartTime = 0;
+        this.pointerActive = false;
+
+        this.handlePointerStart = (e) => {
+            e.preventDefault();
+            this.pointerActive = true;
+            this.pointerStartX = e.clientX;
+            this.pointerStartY = e.clientY;
+            this.pointerStartTime = Date.now();
+        };
+
+        this.handlePointerEnd = (e) => {
+            e.preventDefault();
+            if (!this.pointerActive) return;
+            this.pointerActive = false;
+            if (this.gameOver || this.paused) return;
+            this.handleGesture(
+                e.clientX - this.pointerStartX,
+                e.clientY - this.pointerStartY,
+                Date.now() - this.pointerStartTime,
+            );
+        };
+
+        this.canvas.addEventListener('mousedown', this.handlePointerStart);
+        this.canvas.addEventListener('mouseup', this.handlePointerEnd);
+    }
+
+    handleGesture(dx, dy, dt) {
+        if (Math.abs(dx) < CONFIG.TOUCH_TAP_THRESHOLD && Math.abs(dy) < CONFIG.TOUCH_TAP_THRESHOLD && dt < CONFIG.TOUCH_TAP_TIME) {
+            this.playerRotate(1);
+        } else if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > CONFIG.SWIPE_THRESHOLD) this.playerMove(1);
+            else if (dx < -CONFIG.SWIPE_THRESHOLD) this.playerMove(-1);
+        } else {
+            if (dy > CONFIG.HARD_DROP_THRESHOLD) this.playerHardDrop();
+            else if (dy > CONFIG.TOUCH_TAP_THRESHOLD) this.playerDrop();
+        }
     }
 
     // 7-bag randomizer: shuffle all 7 types, deal from bag
@@ -367,6 +403,8 @@ export class NeonBlocks {
         this.scaler.destroy();
         this.canvas.remove();
         globalThis.removeEventListener('keydown', this.handleKey);
+        this.canvas.removeEventListener('mousedown', this.handlePointerStart);
+        this.canvas.removeEventListener('mouseup', this.handlePointerEnd);
         this.canvas.removeEventListener('touchstart', this.handleTouchStart);
         this.canvas.removeEventListener('touchend', this.handleTouchEnd);
     }

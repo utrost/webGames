@@ -47,6 +47,11 @@ export class Orbit {
         const planet = new Planet(this.width / 2 + 200, this.height / 2);
         planet.setVelocity(new Vector2(0, 5));
         this.bodies.push(planet);
+
+        this.keyboardLaunch = {
+            pos: new Vector2(this.width / 2, this.height - 80),
+            aim: new Vector2(0, -160),
+        };
     }
 
     init() {
@@ -162,6 +167,22 @@ export class Orbit {
             this.ctx.moveTo(this.dragStart.x, this.dragStart.y);
             this.ctx.lineTo(this.dragCurrent.x, this.dragCurrent.y);
             this.ctx.stroke();
+        } else if (this.keyboardLaunch && !this.gameOver) {
+            this.ctx.strokeStyle = '#ffffff';
+            this.ctx.lineWidth = 1;
+            this.ctx.setLineDash([4, 4]);
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.keyboardLaunch.pos.x - 8, this.keyboardLaunch.pos.y);
+            this.ctx.lineTo(this.keyboardLaunch.pos.x + 8, this.keyboardLaunch.pos.y);
+            this.ctx.moveTo(this.keyboardLaunch.pos.x, this.keyboardLaunch.pos.y - 8);
+            this.ctx.lineTo(this.keyboardLaunch.pos.x, this.keyboardLaunch.pos.y + 8);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+            this.ctx.strokeStyle = '#666';
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.keyboardLaunch.pos.x, this.keyboardLaunch.pos.y);
+            this.ctx.lineTo(this.keyboardLaunch.pos.x + this.keyboardLaunch.aim.x, this.keyboardLaunch.pos.y + this.keyboardLaunch.aim.y);
+            this.ctx.stroke();
         }
 
         // Particles
@@ -245,21 +266,7 @@ export class Orbit {
 
             const diff = this.dragStart.clone().subtract(this.dragCurrent);
             const launchVel = diff.scale(0.5);
-
-            const p = new Projectile(this.dragStart.x, this.dragStart.y);
-            p.setVelocity(launchVel);
-
-            p.onCollision = (other) => {
-                if (other.type === 'Comet') {
-                    const multiplier = 1 + 0.5 * this.planetCount;
-                    this.score += Math.floor(100 * multiplier);
-                    this.audio.playTone(800 + Math.random() * 400, 'sine', 0.1);
-                    this.spawnParticles(other.pos.x, other.pos.y, '#e74c3c', 8);
-                }
-            };
-
-            this.bodies.push(p);
-            this.audio.playTone(600, 'sawtooth', 0.1);
+            this.launchProjectile(this.dragStart, launchVel);
         };
 
         this.handleKey = (e) => {
@@ -269,6 +276,22 @@ export class Orbit {
             if (this.gameOver && e.code === 'KeyR') {
                 this.resetGameState();
             }
+            if (this.gameOver || this.paused) return;
+
+            const launchStep = 20;
+            const aimStep = 20;
+            const handledCodes = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space'];
+            if (handledCodes.includes(e.code)) e.preventDefault();
+
+            if (e.code === 'ArrowLeft') this.keyboardLaunch.pos.x = Math.max(0, this.keyboardLaunch.pos.x - launchStep);
+            else if (e.code === 'ArrowRight') this.keyboardLaunch.pos.x = Math.min(this.width, this.keyboardLaunch.pos.x + launchStep);
+            else if (e.code === 'ArrowUp') this.keyboardLaunch.pos.y = Math.max(0, this.keyboardLaunch.pos.y - launchStep);
+            else if (e.code === 'ArrowDown') this.keyboardLaunch.pos.y = Math.min(this.height, this.keyboardLaunch.pos.y + launchStep);
+            else if (e.code === 'KeyA') this.keyboardLaunch.aim.x -= aimStep;
+            else if (e.code === 'KeyD') this.keyboardLaunch.aim.x += aimStep;
+            else if (e.code === 'KeyW') this.keyboardLaunch.aim.y -= aimStep;
+            else if (e.code === 'KeyS') this.keyboardLaunch.aim.y += aimStep;
+            else if (e.code === 'Space') this.launchProjectile(this.keyboardLaunch.pos, this.keyboardLaunch.aim);
         };
 
         // Touch support
@@ -294,6 +317,23 @@ export class Orbit {
         this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
         this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
         this.canvas.addEventListener('touchend', this.handleTouchEnd, { passive: false });
+    }
+
+    launchProjectile(pos, velocity) {
+        const p = new Projectile(pos.x, pos.y);
+        p.setVelocity(velocity.clone());
+
+        p.onCollision = (other) => {
+            if (other.type === 'Comet') {
+                const multiplier = 1 + 0.5 * this.planetCount;
+                this.score += Math.floor(100 * multiplier);
+                this.audio.playTone(800 + Math.random() * 400, 'sine', 0.1);
+                this.spawnParticles(other.pos.x, other.pos.y, '#e74c3c', 8);
+            }
+        };
+
+        this.bodies.push(p);
+        this.audio.playTone(600, 'sawtooth', 0.1);
     }
 
     spawnParticles(x, y, color, count) {
