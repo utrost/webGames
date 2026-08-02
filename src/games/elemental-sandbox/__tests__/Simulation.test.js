@@ -193,4 +193,39 @@ describe('Simulation', () => {
         expect(sim.idx(0, 1)).toBe(10);
         expect(sim.idx(3, 2)).toBe(23);
     });
+
+    it('smoke rises diagonally if it cannot rise straight up', () => {
+        const sim = new Simulation(3, 3);
+        sim.set(1, 1, ELEMENTS.SMOKE);
+        sim.set(1, 0, ELEMENTS.STONE);
+        sim.set(0, 1, ELEMENTS.STONE);
+
+        const originalRandom = Math.random;
+        Math.random = () => 0.99;
+        try {
+            sim.updateSmoke(1, 1);
+        } finally {
+            Math.random = originalRandom;
+        }
+
+        expect(sim.get(2, 0)).toBe(ELEMENTS.SMOKE);
+        expect(sim.get(1, 1)).toBe(ELEMENTS.EMPTY);
+    });
+
+    it('fire converts adjacent water to steam before it can die or rise', () => {
+        const sim = new Simulation(3, 3);
+        sim.set(1, 1, ELEMENTS.FIRE);
+        sim.set(2, 1, ELEMENTS.WATER);
+
+        const originalRandom = Math.random;
+        Math.random = () => 0.01;
+        try {
+            sim.updateFire(1, 1);
+        } finally {
+            Math.random = originalRandom;
+        }
+
+        expect(sim.get(1, 1)).toBe(ELEMENTS.STEAM);
+        expect(sim.get(2, 1)).toBe(ELEMENTS.STEAM);
+    });
 });

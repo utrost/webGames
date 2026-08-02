@@ -171,6 +171,20 @@ export class Simulation {
         // Update color for flicker
         this.colors[this.idx(x, y)] = getFireColor();
 
+        // Water contact has priority: documented as 100% immediate steam.
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dy === 0) continue;
+                const nx = x + dx;
+                const ny = y + dy;
+                if (this.inBounds(nx, ny) && this.get(nx, ny) === ELEMENTS.WATER) {
+                    this.set(x, y, ELEMENTS.STEAM);
+                    this.set(nx, ny, ELEMENTS.STEAM);
+                    return;
+                }
+            }
+        }
+
         // Random chance to die
         if (Math.random() < 0.05) {
             this.set(x, y, Math.random() < 0.3 ? ELEMENTS.SMOKE : ELEMENTS.EMPTY);
@@ -200,10 +214,6 @@ export class Simulation {
                     this.set(nx, ny, ELEMENTS.FIRE);
                 } else if (neighbor === ELEMENTS.WOOD && Math.random() < 0.05) {
                     this.set(nx, ny, ELEMENTS.FIRE);
-                } else if (neighbor === ELEMENTS.WATER) {
-                    this.set(x, y, ELEMENTS.STEAM);
-                    this.set(nx, ny, ELEMENTS.STEAM);
-                    return;
                 }
             }
         }
@@ -304,6 +314,11 @@ export class Simulation {
         }
 
         const dir = Math.random() < 0.5 ? -1 : 1;
+        if (this.inBounds(x + dir, y - 1) && this.isEmpty(x + dir, y - 1)) {
+            this.swap(x, y, x + dir, y - 1);
+            return;
+        }
+
         if (this.inBounds(x + dir, y) && this.isEmpty(x + dir, y)) {
             this.swap(x, y, x + dir, y);
         }

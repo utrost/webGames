@@ -113,7 +113,9 @@ export class Grid {
                         // Propagate color
                         if (!neighbor.activeColors.has(color)) {
                             neighbor.activeColors.add(color);
-                            queue.push({ r: nr, c: nc, color: color });
+                            if (neighbor.type !== TILE_TYPES.SINK) {
+                                queue.push({ r: nr, c: nc, color: color });
+                            }
                         }
                     }
                 }

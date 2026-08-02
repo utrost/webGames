@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { NeonBlocks } from '../index.js';
 import { SHAPES } from '../Shapes.js';
 import { CONFIG } from '../config.js';
 
@@ -45,7 +46,7 @@ function merge(arena, player) {
 
 function arenaSweep(grid, cols) {
     let rowCount = 0;
-    outer: for (let y = grid.length - 1; y > 0; --y) {
+    outer: for (let y = grid.length - 1; y >= 0; --y) {
         for (let x = 0; x < grid[y].length; ++x) {
             if (grid[y][x] === null) continue outer;
         }
@@ -209,6 +210,13 @@ describe('Neon Blocks game logic', () => {
             const cleared = arenaSweep(grid, 10);
             expect(cleared).toBe(4);
         });
+        it('clears a full top row too', () => {
+            const grid = makeGrid();
+            for (let x = 0; x < 10; x++) grid[0][x] = '#fff';
+            const cleared = arenaSweep(grid, 10);
+            expect(cleared).toBe(1);
+            expect(grid[0].every(c => c === null)).toBe(true);
+        });
     });
 
     describe('Scoring', () => {
@@ -258,5 +266,112 @@ describe('Neon Blocks game logic', () => {
             expect(CONFIG.LOCK_DELAY).toBe(500);
             expect(CONFIG.LOCK_DELAY_RESETS).toBe(15);
         });
+    });
+});
+
+function fakeContext() {
+    return new Proxy({}, { get: () => vi.fn() });
+}
+
+function makeNeonBlocks() {
+    const originalWindow = globalThis.window;
+    const originalDocument = globalThis.document;
+    const originalLocalStorage = globalThis.localStorage;
+    const listeners = { addEventListener: vi.fn(), removeEventListener: vi.fn() };
+    const container = {
+        clientWidth: 480,
+        clientHeight: 600,
+        appendChild: vi.fn((child) => { child.parentElement = container; }),
+    };
+
+    globalThis.window = { ...listeners, innerWidth: 480, innerHeight: 600 };
+    globalThis.document = {
+        createElement: vi.fn(() => ({
+            style: {},
+            parentElement: null,
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+            remove: vi.fn(),
+            getContext: vi.fn(() => fakeContext()),
+        })),
+    };
+    globalThis.localStorage = { getItem: vi.fn(() => '0'), setItem: vi.fn() };
+
+    const game = new NeonBlocks(container, vi.fn());
+    game.audio.playTone = vi.fn();
+
+    return {
+        game,
+        restore: () => {
+            globalThis.window = originalWindow;
+            globalThis.document = originalDocument;
+            globalThis.localStorage = originalLocalStorage;
+        },
+    };
+}
+
+describe('NeonBlocks class mechanics', () => {
+    it('arenaSweep clears row 0 in the real game class', () => {
+        const { game, restore } = makeNeonBlocks();
+        try {
+            game.grid = makeGrid();
+            game.score = 0;
+            game.linesCleared = 0;
+            game.level = 1;
+            game.dropInterval = CONFIG.INITIAL_DROP_INTERVAL;
+            game.particles = [];
+            for (let x = 0; x < game.cols; x++) game.grid[0][x] = '#fff';
+
+            game.arenaSweep();
+
+            expect(game.grid[0].every(c => c === null)).toBe(true);
+            expect(game.score).toBe(CONFIG.SINGLE_LINE_SCORE);
+            expect(game.linesCleared).toBe(1);
+        } finally {
+            restore();
+        }
+    });
+
+    it('soft/automatic drop starts lock delay instead of immediately locking on collision', () => {
+        const { game, restore } = makeNeonBlocks();
+        try {
+            game.grid = makeGrid();
+            game.player = { matrix: [[1]], pos: { x: 4, y: CONFIG.ROWS - 1 }, color: '#fff' };
+            game.isLanding = false;
+            game.lockTimer = 0;
+            game.lockResets = 0;
+            game.dropCounter = 123;
+            const lockSpy = vi.spyOn(game, '_lockPiece');
+
+            game.playerDrop();
+
+            expect(lockSpy).not.toHaveBeenCalled();
+            expect(game.player.pos.y).toBe(CONFIG.ROWS - 1);
+            expect(game.isLanding).toBe(true);
+            expect(game.lockTimer).toBe(0);
+            expect(game.dropCounter).toBe(0);
+        } finally {
+            restore();
+        }
+    });
+
+    it('does not let repeated soft drops reset an active lock delay', () => {
+        const { game, restore } = makeNeonBlocks();
+        try {
+            game.grid = makeGrid();
+            game.player = { matrix: [[1]], pos: { x: 4, y: CONFIG.ROWS - 1 }, color: '#fff' };
+            game.isLanding = true;
+            game.lockTimer = CONFIG.LOCK_DELAY - 100;
+            game.lockResets = 0;
+            const lockSpy = vi.spyOn(game, '_lockPiece');
+
+            game.playerDrop();
+
+            expect(lockSpy).not.toHaveBeenCalled();
+            expect(game.lockTimer).toBe(CONFIG.LOCK_DELAY - 100);
+            expect(game.lockResets).toBe(0);
+        } finally {
+            restore();
+        }
     });
 });

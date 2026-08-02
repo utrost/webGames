@@ -309,8 +309,8 @@ export class CosmicBreaker {
                         this.playSound('brick_hit');
                     }
 
-                    const dx = Math.abs(ball.pos.x - (brick.x + brick.width / 2));
-                    const dy = Math.abs(ball.pos.y - (brick.y + brick.height / 2));
+                    const dx = Math.abs(nextPos.x - (brick.x + brick.width / 2));
+                    const dy = Math.abs(nextPos.y - (brick.y + brick.height / 2));
                     const halfW = brick.width / 2;
                     const halfH = brick.height / 2;
 
@@ -336,7 +336,7 @@ export class CosmicBreaker {
             const p = this.powerups[i];
             p.y += p.dy * dt;
 
-            if (this.checkAABB({ x: p.x, y: p.y + p.height / 2 }, this.paddle)) {
+            if (this.rectsOverlap(this.powerUpBounds(p), this.paddle)) {
                 this.activatePowerUp(p.type);
                 this.powerups.splice(i, 1);
                 this.playSound('powerup');
@@ -417,7 +417,7 @@ export class CosmicBreaker {
             case 'WIDE':
                 this.paddle.width = this.BASE_PADDLE_WIDTH * CONFIG.WIDE_PADDLE_MULTIPLIER;
                 this.paddle.color = this.POWERUP_TYPES.WIDE.color;
-                this.widePaddleTimer = 15; // 15 seconds
+                this.widePaddleTimer = 0;
                 break;
             case 'LIFE':
                 this.lives++;
@@ -442,6 +442,22 @@ export class CosmicBreaker {
                 size: 2 + Math.random() * 3
             });
         }
+    }
+
+    powerUpBounds(powerup) {
+        return {
+            x: powerup.x - powerup.width / 2,
+            y: powerup.y - powerup.height / 2,
+            width: powerup.width,
+            height: powerup.height,
+        };
+    }
+
+    rectsOverlap(a, b) {
+        return a.x < b.x + b.width &&
+            a.x + a.width > b.x &&
+            a.y < b.y + b.height &&
+            a.y + a.height > b.y;
     }
 
     checkAABB(circlePos, rect) {

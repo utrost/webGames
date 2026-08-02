@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { Grid, TILE_TYPES, PIPE_SHAPES } from '../Logic.js';
 
-describe('Grid', () => {
+import { Levels } from '../levels.js';
+
+describe('Grid Flow Logic', () => {
     it('creates empty grid of correct size', () => {
         const grid = new Grid(5, 6);
         expect(grid.rows).toBe(5);
@@ -115,6 +117,31 @@ describe('calculateFlow', () => {
         grid.calculateFlow();
 
         expect(grid.get(0, 2).activeColors.has('#f00')).toBe(false);
+        expect(grid.checkWinCondition()).toBe(false);
+    });
+    it('treats sinks as terminal receivers, not pass-through pipes', () => {
+        const grid = new Grid(1, 4);
+        grid.setTile(0, 0, TILE_TYPES.SOURCE, null, 0, '#f00');
+        grid.setTile(0, 1, TILE_TYPES.SINK, null, 0, '#f00');
+        grid.setTile(0, 2, TILE_TYPES.PIPE, PIPE_SHAPES.STRAIGHT, 1);
+        grid.setTile(0, 3, TILE_TYPES.SINK, null, 0, '#f00');
+
+        grid.calculateFlow();
+
+        expect(grid.get(0, 1).activeColors.has('#f00')).toBe(true);
+        expect(grid.get(0, 2).activeColors.size).toBe(0);
+        expect(grid.get(0, 3).activeColors.size).toBe(0);
+    });
+});
+
+describe('levels', () => {
+    it('does not start the first puzzle already solved', () => {
+        const level = Levels[0];
+        const grid = new Grid(level.rows, level.cols);
+        level.tiles.forEach(t => grid.setTile(t.r, t.c, t.type, t.shape, t.rotation, t.color));
+
+        grid.calculateFlow();
+
         expect(grid.checkWinCondition()).toBe(false);
     });
 });

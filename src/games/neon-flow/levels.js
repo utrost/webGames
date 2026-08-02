@@ -8,7 +8,7 @@ export const Levels = [
         tiles: [
             { r: 2, c: 0, type: TILE_TYPES.SOURCE, color: '#f00' },
             { r: 2, c: 1, type: TILE_TYPES.PIPE, shape: PIPE_SHAPES.STRAIGHT, rotation: 1 },
-            { r: 2, c: 2, type: TILE_TYPES.PIPE, shape: PIPE_SHAPES.STRAIGHT, rotation: 1 },
+            { r: 2, c: 2, type: TILE_TYPES.PIPE, shape: PIPE_SHAPES.STRAIGHT, rotation: 0 },
             { r: 2, c: 3, type: TILE_TYPES.PIPE, shape: PIPE_SHAPES.STRAIGHT, rotation: 1 },
             { r: 2, c: 4, type: TILE_TYPES.SINK, color: '#f00' }
         ]

@@ -156,11 +156,20 @@ export class NeonBlocks {
         }
     }
 
-    playerDrop() {
+    playerDrop({ lockOnCollision = false } = {}) {
         this.player.pos.y++;
         if (this.collide(this.grid, this.player)) {
             this.player.pos.y--;
-            this._lockPiece();
+            if (lockOnCollision) {
+                this._lockPiece();
+            } else if (!this.isLanding) {
+                this.isLanding = true;
+                this.lockTimer = 0;
+                this.lockResets = 0;
+            }
+        } else {
+            this.isLanding = false;
+            this.lockTimer = 0;
         }
         this.dropCounter = 0;
     }
@@ -303,7 +312,7 @@ export class NeonBlocks {
 
     arenaSweep() {
         let rowCount = 0;
-        outer: for (let y = this.grid.length - 1; y > 0; --y) {
+        outer: for (let y = this.grid.length - 1; y >= 0; --y) {
             for (let x = 0; x < this.grid[y].length; ++x) {
                 if (this.grid[y][x] === null) {
                     continue outer;
@@ -385,9 +394,11 @@ export class NeonBlocks {
             this.lockTimer = 0;
         }
 
-        this.dropCounter += dt * 1000;
-        if (this.dropCounter > this.dropInterval) {
-            this.playerDrop();
+        if (!wouldCollide) {
+            this.dropCounter += dt * 1000;
+            if (this.dropCounter > this.dropInterval) {
+                this.playerDrop();
+            }
         }
 
         for (let i = this.particles.length - 1; i >= 0; i--) {

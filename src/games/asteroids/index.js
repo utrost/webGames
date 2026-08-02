@@ -253,6 +253,7 @@ export class Asteroids {
     destroyAsteroid(a) {
         if (a.toBeRemoved) return;
         a.toBeRemoved = true;
+        this.asteroids = this.asteroids.filter(asteroid => asteroid !== a);
         this.score += 100 * (4 - a.size);
         this.audio.playTone(400 - a.size * 50, 'square', 0.1);
 
@@ -265,6 +266,7 @@ export class Asteroids {
                 const angle = Math.random() * Math.PI * 2;
                 newA.vel = a.vel.clone().add(new Vector2(Math.cos(angle), Math.sin(angle)).scale(50));
                 this.entities.push(newA);
+                this.asteroids.push(newA);
             }
         }
     }
