@@ -4,7 +4,7 @@
 
 A collection of six browser-based games built with vanilla JavaScript and HTML5 Canvas. Neon-retro aesthetic, no frameworks, minimal dependencies.
 
-[How to play](docs/how-to-play.md) covers the current mouse, keyboard, and touch controls for every game.
+[How to play](docs/how-to-play.md) covers the current mouse, keyboard, and touch controls for every game. [New game checklist](docs/new-game-checklist.md) defines the quality gate for additional classics.
 
 ![Neon Blocks gameplay screenshot showing the dark grid, glowing purple tetromino, and score panel.](docs/images/neon-blocks-screenshot.jpg)
 
@@ -89,7 +89,7 @@ npm test              # Run all tests once
 npm run test:watch    # Run tests in watch mode
 ```
 
-**Test coverage:** 254 tests across 26 test files covering the shared core, responsive layout contract, input modality support, controls/help documentation, lifecycle contracts, code-design documentation, and all six game cartridges.
+**Test coverage:** 256 tests across 26 test files covering the shared core, responsive layout contract, input modality support, controls/help documentation, lifecycle contracts, code-design documentation, new-game quality gate documentation, and all six game cartridges.
 
 Key areas:
 - Core: Vector2, StorageManager, GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker, InputManager, AudioManager, CanvasScaler, ResponsiveLayout

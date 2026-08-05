@@ -1,6 +1,6 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { GAME_REGISTRY } from '../gameRegistry.js';
+import { GAME_REGISTRY, getPlayableGames } from '../gameRegistry.js';
 
 describe('game controls metadata and help docs', () => {
     it('documents mouse, keyboard, and touch controls for every playable game', () => {
@@ -47,5 +47,38 @@ describe('game controls metadata and help docs', () => {
             expect(design).toContain('## Rendering layers');
             expect(design).toContain('## Current quality notes');
         }
+    });
+
+    it('documents the quality gate for adding future games', () => {
+        expect(existsSync('docs/new-game-checklist.md')).toBe(true);
+        expect(existsSync('src/games/_template/index.js')).toBe(true);
+        expect(existsSync('src/games/_template/DESIGN.md')).toBe(true);
+
+        const checklist = readFileSync('docs/new-game-checklist.md', 'utf8');
+        for (const required of [
+            'constructor(container, onGameOver)',
+            'init()',
+            'stop()',
+            'resetGameState()',
+            'controls metadata',
+            'DESIGN.md',
+            'npm test',
+            'npm run lint',
+            'npm run build',
+            'browser smoke',
+        ]) {
+            expect(checklist).toContain(required);
+        }
+
+        const gamesReadme = readFileSync('src/games/README.md', 'utf8');
+        expect(gamesReadme).toContain('[new-game checklist](../../docs/new-game-checklist.md)');
+        expect(gamesReadme).toContain('_template/');
+    });
+
+    it('keeps the copy-start template out of the playable registry', () => {
+        const registrySource = readFileSync('src/app/gameRegistry.js', 'utf8');
+        expect(registrySource).not.toContain('_template');
+        expect(registrySource).not.toContain('TemplateGame');
+        expect(getPlayableGames().map((game) => game.id)).not.toContain('_template');
     });
 });

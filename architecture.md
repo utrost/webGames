@@ -33,7 +33,7 @@ src/
 
 ## 🧩 Game Interface
 
-Every game **MUST** be a class that implements the following interface. This allows the Lobby to load/unload it generically.
+Every game **MUST** be a class that implements the following interface. This allows the Lobby to load/unload it generically. Start new cartridges from `src/games/_template/` and follow `docs/new-game-checklist.md` before registering them as playable.
 
 ```javascript
 /* src/games/your-game/index.js */
@@ -81,6 +81,18 @@ For arcade-style games (Breakout, Space Invaders), general-purpose engines like 
 
 *   **Audio**: Use `AudioManager` (Web Audio API wrapper) to prevent browser autoplay policies from blocking sound.
 *   **Images**: Preload assets in `init()` before starting the game loop if possible.
+
+## 🧪 New Game Quality Gate
+
+Before implementing another arcade classic, copy `src/games/_template/` and use `docs/new-game-checklist.md` as the release gate. A new playable cartridge must ship with:
+
+- a clean lifecycle (`constructor(container, onGameOver)`, `init()`, `stop()`, `resetGameState()`),
+- controls metadata for mouse, keyboard, and touch,
+- a current `DESIGN.md`,
+- focused game tests,
+- README / `games.md` / how-to-play updates,
+- local `npm test`, `npm run lint`, and `npm run build`,
+- browser smoke locally and after deploy.
 
 ## 🧪 Testing
 
