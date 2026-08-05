@@ -196,4 +196,27 @@ describe('game input modality coverage', () => {
             restore();
         }
     });
+
+    it('Neon Flow restart after campaign completion allows a fresh completion', () => {
+        const { container, restore } = installDom();
+        try {
+            const onGameOver = vi.fn();
+            const game = new NeonFlow(container, onGameOver);
+            game.resetGameState();
+
+            game.loadLevel(999);
+            expect(game.gameOver).toBe(true);
+            expect(onGameOver).toHaveBeenCalledTimes(1);
+
+            game.resetGameState();
+            expect(game.gameOver).toBe(false);
+            expect(game.currentLevelIndex).toBe(0);
+
+            game.loadLevel(999);
+            expect(game.gameOver).toBe(true);
+            expect(onGameOver).toHaveBeenCalledTimes(2);
+        } finally {
+            restore();
+        }
+    });
 });

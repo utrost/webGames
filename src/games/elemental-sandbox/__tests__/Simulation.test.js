@@ -228,4 +228,28 @@ describe('Simulation', () => {
         expect(sim.get(1, 1)).toBe(ELEMENTS.STEAM);
         expect(sim.get(2, 1)).toBe(ELEMENTS.STEAM);
     });
+
+    it('can mark transformed cells as already updated for the current frame', () => {
+        const sim = new Simulation(3, 3);
+        sim.frame = 7;
+
+        sim.set(1, 1, ELEMENTS.FIRE, { markUpdated: true });
+
+        expect(sim.get(1, 1)).toBe(ELEMENTS.FIRE);
+        expect(sim.wasUpdated(1, 1)).toBe(true);
+    });
+
+    it('marks fire-to-steam transformations so new steam waits until the next frame', () => {
+        const sim = new Simulation(3, 3);
+        sim.frame = 4;
+        sim.set(1, 1, ELEMENTS.FIRE);
+        sim.set(2, 1, ELEMENTS.WATER);
+
+        sim.updateFire(1, 1);
+
+        expect(sim.get(1, 1)).toBe(ELEMENTS.STEAM);
+        expect(sim.get(2, 1)).toBe(ELEMENTS.STEAM);
+        expect(sim.wasUpdated(1, 1)).toBe(true);
+        expect(sim.wasUpdated(2, 1)).toBe(true);
+    });
 });

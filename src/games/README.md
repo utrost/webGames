@@ -6,12 +6,14 @@ All individual games live in their own subdirectories here. Each game is a stand
 
 | Directory | Game | Key Modules |
 |---|---|---|
-| `asteroids/` | Asteroids | `index.js`, `Entities.js`, `config.js` |
-| `cosmic-breaker/` | Cosmic Breaker | `index.js`, `levels.js`, `config.js` |
-| `elemental-sandbox/` | Elemental Sandbox | `index.js`, `Simulation.js`, `Elements.js`, `config.js` |
-| `neon-blocks/` | Neon Blocks | `index.js`, `Shapes.js`, `config.js` |
-| `neon-flow/` | Neon Flow | `index.js`, `Logic.js`, `levels.js`, `config.js` |
-| `orbit/` | Orbit | `index.js`, `Physics.js`, `Entities.js`, `config.js` |
+| `asteroids/` | Asteroids | `index.js`, `Entities.js`, `config.js`, `DESIGN.md` |
+| `cosmic-breaker/` | Cosmic Breaker | `index.js`, `levels.js`, `config.js`, `DESIGN.md` |
+| `elemental-sandbox/` | Elemental Sandbox | `index.js`, `Simulation.js`, `Elements.js`, `config.js`, `DESIGN.md` |
+| `neon-blocks/` | Neon Blocks | `index.js`, `Shapes.js`, `config.js`, `DESIGN.md` |
+| `neon-flow/` | Neon Flow | `index.js`, `Logic.js`, `levels.js`, `config.js`, `DESIGN.md` |
+| `orbit/` | Orbit | `index.js`, `Physics.js`, `Entities.js`, `config.js`, `DESIGN.md` |
+
+Each game folder includes a `DESIGN.md` that documents the current code design: cartridge boundary, module responsibilities, state model, update order, input model, render layers, and known quality notes.
 
 ## Game Interface
 

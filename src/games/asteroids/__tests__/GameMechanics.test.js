@@ -63,4 +63,34 @@ describe('Asteroids game mechanics', () => {
             restore();
         }
     });
+
+    it('resets transient wave timing state on restart', () => {
+        const { game, restore } = makeGame();
+        try {
+            game.waveDelay = 0.4;
+
+            game.resetGameState();
+
+            expect(game.waveDelay).toBe(0);
+        } finally {
+            restore();
+        }
+    });
+
+    it('allows intentional edge spawns at x=0', () => {
+        const { game, restore } = makeGame();
+        try {
+            game.entities = [];
+            game.asteroids = [];
+
+            game.spawnAsteroid(0, 100, 2);
+
+            expect(game.asteroids).toHaveLength(1);
+            expect(game.asteroids[0].pos.x).toBe(0);
+            expect(game.asteroids[0].pos.y).toBe(100);
+            expect(game.asteroids[0].size).toBe(2);
+        } finally {
+            restore();
+        }
+    });
 });

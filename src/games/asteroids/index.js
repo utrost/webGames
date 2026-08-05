@@ -31,6 +31,7 @@ export class Asteroids {
         this.paused = false;
         this.shootCooldown = 0;
         this.respawnTimer = 0;
+        this.waveDelay = 0;
 
         this.entities = [];
         this.asteroids = [];
@@ -145,7 +146,7 @@ export class Asteroids {
     }
 
     spawnAsteroid(x, y, size = 3) {
-        if (!x) {
+        if (x == null || y == null) {
             do {
                 x = Math.random() * this.width;
                 y = Math.random() * this.height;

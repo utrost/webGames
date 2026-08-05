@@ -151,7 +151,7 @@ export class CosmicBreaker {
     }
 
     stop() {
-        this.loop.stop();
+        this.loop?.stop();
         this.scaler.destroy();
         this.isRunning = false;
         window.removeEventListener('mousemove', this.inputHandler);
@@ -481,6 +481,7 @@ export class CosmicBreaker {
         if (this.lives <= 0) {
             this.gameOver = true;
             this.storage.saveHighScore('cosmic-breaker', this.score);
+            this.highScore = this.storage.getHighScore('cosmic-breaker');
             if (this.onGameOver) this.onGameOver();
         } else {
             this.resetBall();

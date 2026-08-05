@@ -23,8 +23,13 @@ function collide(arena, player) {
     const [m, o] = [player.matrix, player.pos];
     for (let y = 0; y < m.length; ++y) {
         for (let x = 0; x < m[y].length; ++x) {
-            if (m[y][x] !== 0 &&
-                (arena[y + o.y] && arena[y + o.y][x + o.x]) !== null) {
+            if (m[y][x] === 0) continue;
+            const arenaY = y + o.y;
+            const arenaX = x + o.x;
+            if (arenaY >= arena.length || arenaX < 0 || arenaX >= arena[0].length) {
+                return true;
+            }
+            if (arenaY >= 0 && arena[arenaY][arenaX] !== null) {
                 return true;
             }
         }
@@ -327,6 +332,24 @@ describe('NeonBlocks class mechanics', () => {
             expect(game.grid[0].every(c => c === null)).toBe(true);
             expect(game.score).toBe(CONFIG.SINGLE_LINE_SCORE);
             expect(game.linesCleared).toBe(1);
+        } finally {
+            restore();
+        }
+    });
+
+    it('uses production collision rules for walls, floor, occupied cells, and spawn-above-grid', () => {
+        const { game, restore } = makeNeonBlocks();
+        try {
+            const grid = makeGrid();
+            const matrix = SHAPES.T.matrix.map(r => [...r]);
+
+            expect(game.collide(grid, { matrix, pos: { x: 3, y: -1 } })).toBe(false);
+            expect(game.collide(grid, { matrix, pos: { x: -1, y: 5 } })).toBe(true);
+            expect(game.collide(grid, { matrix, pos: { x: 8, y: 5 } })).toBe(true);
+            expect(game.collide(grid, { matrix, pos: { x: 3, y: 19 } })).toBe(true);
+
+            grid[5][4] = '#fff';
+            expect(game.collide(grid, { matrix, pos: { x: 3, y: 4 } })).toBe(true);
         } finally {
             restore();
         }

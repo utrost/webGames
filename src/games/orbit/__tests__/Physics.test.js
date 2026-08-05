@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { Physics } from '../Physics.js';
 import { Body, Sun, Planet, Comet, Projectile } from '../Entities.js';
+import { Orbit } from '../index.js';
+import { CONFIG } from '../config.js';
 
 describe('Body', () => {
     it('constructs with position, mass, radius, color', () => {
@@ -72,6 +74,83 @@ describe('Projectile', () => {
         expect(p.radius).toBe(4);
         expect(p.life).toBe(0);
     });
+});
+
+describe('Orbit cloning and lifecycle contracts', () => {
+    function withBrowserStubs(run) {
+        const originalWindow = globalThis.window;
+        const originalDocument = globalThis.document;
+        const originalLocalStorage = globalThis.localStorage;
+        const container = { appendChild: vi.fn(), clientWidth: 800, clientHeight: 600 };
+        globalThis.window = { addEventListener: vi.fn(), removeEventListener: vi.fn(), innerWidth: 800, innerHeight: 600 };
+        globalThis.document = {
+            createElement: vi.fn(() => ({
+                getContext: vi.fn(() => new Proxy({}, { get: () => vi.fn() })),
+                addEventListener: vi.fn(),
+                removeEventListener: vi.fn(),
+                remove: vi.fn(),
+                style: {},
+            })),
+        };
+        globalThis.localStorage = { getItem: vi.fn(() => '0'), setItem: vi.fn() };
+        try {
+            return run(container);
+        } finally {
+            globalThis.window = originalWindow;
+            globalThis.document = originalDocument;
+            globalThis.localStorage = originalLocalStorage;
+        }
+    }
+
+    it('clones subclass-specific simulation state', () => {
+        const sun = new Sun(1, 2);
+        sun.hp = 42;
+        const projectile = new Projectile(3, 4);
+        projectile.life = 5;
+        projectile.toBeRemoved = true;
+        projectile.setVelocity({ x: 7, y: 8, clone: () => ({ x: 7, y: 8 }) });
+
+        const sunCopy = sun.clone();
+        const projectileCopy = projectile.clone();
+
+        expect(sunCopy).toBeInstanceOf(Sun);
+        expect(sunCopy.hp).toBe(42);
+        expect(projectileCopy).toBeInstanceOf(Projectile);
+        expect(projectileCopy.life).toBe(5);
+        expect(projectileCopy.toBeRemoved).toBe(true);
+        expect(projectileCopy.vel).toEqual({ x: 7, y: 8 });
+    });
+
+    it('uses configured launch scale for drag launch velocity', () => withBrowserStubs((container) => {
+        const game = new Orbit(container, vi.fn());
+        game.setupInput();
+        game.launchProjectile = vi.fn();
+        game.isDragging = true;
+        game.dragStart = {
+            x: 100,
+            y: 100,
+            clone: () => ({ subtract: () => ({ scale: (factor) => ({ x: 40 * factor, y: 20 * factor }) }) }),
+        };
+        game.dragCurrent = { x: 60, y: 80 };
+
+        game.handleUp();
+
+        expect(game.launchProjectile).toHaveBeenCalledWith(game.dragStart, { x: 40 * CONFIG.LAUNCH_SCALE, y: 20 * CONFIG.LAUNCH_SCALE });
+    }));
+
+    it('invokes game-over callback once when the sun fails', () => withBrowserStubs((container) => {
+        const onGameOver = vi.fn();
+        const game = new Orbit(container, onGameOver);
+        game.resetGameState();
+        game.physics.update = vi.fn();
+        game.sun.hp = 0;
+
+        game.update(0.016);
+        game.update(0.016);
+
+        expect(game.gameOver).toBe(true);
+        expect(onGameOver).toHaveBeenCalledTimes(1);
+    }));
 });
 
 describe('Physics', () => {

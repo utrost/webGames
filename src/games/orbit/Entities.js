@@ -22,12 +22,16 @@ export class Body {
     }
 
     clone() {
-        const copy = new Body(this.pos.x, this.pos.y, this.mass, this.radius, this.color);
+        const copy = new this.constructor(this.pos.x, this.pos.y, this.mass, this.radius, this.color);
         copy.pos = this.pos.clone();
         copy.oldPos = this.oldPos.clone();
         copy.acc = this.acc.clone();
         copy.type = this.type;
         copy.isStatic = this.isStatic;
+        copy.toBeRemoved = this.toBeRemoved;
+        if (this.vel) copy.vel = this.vel.clone();
+        if ('hp' in this) copy.hp = this.hp;
+        if ('life' in this) copy.life = this.life;
         return copy;
     }
 }

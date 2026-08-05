@@ -23,7 +23,7 @@ export class Simulation {
         return this.grid[this.idx(x, y)];
     }
 
-    set(x, y, type) {
+    set(x, y, type, { markUpdated = false } = {}) {
         if (!this.inBounds(x, y)) return;
         const i = this.idx(x, y);
         this.grid[i] = type;
@@ -34,6 +34,7 @@ export class Simulation {
         } else {
             this.colors[i] = getColor(type);
         }
+        if (markUpdated) this.updated[i] = this.frame;
     }
 
     swap(x1, y1, x2, y2) {
@@ -178,8 +179,8 @@ export class Simulation {
                 const nx = x + dx;
                 const ny = y + dy;
                 if (this.inBounds(nx, ny) && this.get(nx, ny) === ELEMENTS.WATER) {
-                    this.set(x, y, ELEMENTS.STEAM);
-                    this.set(nx, ny, ELEMENTS.STEAM);
+                    this.set(x, y, ELEMENTS.STEAM, { markUpdated: true });
+                    this.set(nx, ny, ELEMENTS.STEAM, { markUpdated: true });
                     return;
                 }
             }
@@ -187,7 +188,7 @@ export class Simulation {
 
         // Random chance to die
         if (Math.random() < 0.05) {
-            this.set(x, y, Math.random() < 0.3 ? ELEMENTS.SMOKE : ELEMENTS.EMPTY);
+            this.set(x, y, Math.random() < 0.3 ? ELEMENTS.SMOKE : ELEMENTS.EMPTY, { markUpdated: true });
             return;
         }
 
@@ -209,11 +210,11 @@ export class Simulation {
                 const neighbor = this.get(nx, ny);
 
                 if (neighbor === ELEMENTS.OIL && Math.random() < 0.5) {
-                    this.set(nx, ny, ELEMENTS.FIRE);
+                    this.set(nx, ny, ELEMENTS.FIRE, { markUpdated: true });
                 } else if (neighbor === ELEMENTS.PLANT && Math.random() < 0.2) {
-                    this.set(nx, ny, ELEMENTS.FIRE);
+                    this.set(nx, ny, ELEMENTS.FIRE, { markUpdated: true });
                 } else if (neighbor === ELEMENTS.WOOD && Math.random() < 0.05) {
-                    this.set(nx, ny, ELEMENTS.FIRE);
+                    this.set(nx, ny, ELEMENTS.FIRE, { markUpdated: true });
                 }
             }
         }
@@ -233,9 +234,9 @@ export class Simulation {
                 if (neighbor === ELEMENTS.SAND || neighbor === ELEMENTS.WOOD ||
                     neighbor === ELEMENTS.PLANT || neighbor === ELEMENTS.STONE) {
                     if (Math.random() < 0.1) {
-                        this.set(nx, ny, ELEMENTS.EMPTY);
+                        this.set(nx, ny, ELEMENTS.EMPTY, { markUpdated: true });
                         if (Math.random() < 0.5) {
-                            this.set(x, y, ELEMENTS.SMOKE);
+                            this.set(x, y, ELEMENTS.SMOKE, { markUpdated: true });
                             return;
                         }
                     }
@@ -272,7 +273,7 @@ export class Simulation {
                 if (!this.inBounds(nx, ny)) continue;
 
                 if (this.get(nx, ny) === ELEMENTS.WATER && Math.random() < 0.02) {
-                    this.set(nx, ny, ELEMENTS.PLANT);
+                    this.set(nx, ny, ELEMENTS.PLANT, { markUpdated: true });
                 }
             }
         }
@@ -281,7 +282,7 @@ export class Simulation {
     // Steam: rises, eventually condenses
     updateSteam(x, y) {
         if (Math.random() < 0.01) {
-            this.set(x, y, ELEMENTS.WATER);
+            this.set(x, y, ELEMENTS.WATER, { markUpdated: true });
             return;
         }
 
@@ -304,7 +305,7 @@ export class Simulation {
     // Smoke: rises and disappears
     updateSmoke(x, y) {
         if (Math.random() < 0.02) {
-            this.set(x, y, ELEMENTS.EMPTY);
+            this.set(x, y, ELEMENTS.EMPTY, { markUpdated: true });
             return;
         }
 

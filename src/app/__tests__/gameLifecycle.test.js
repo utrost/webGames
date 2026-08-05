@@ -21,7 +21,7 @@ describe('game lifecycle contracts', () => {
     it('clears delayed Neon Flow level transitions when the game is stopped', () => {
         const source = readFileSync('src/games/neon-flow/index.js', 'utf8');
         expect(source).toContain('clearLevelAdvanceTimer()');
-        expect(source).toContain('this.clearLevelAdvanceTimer();\n        this.loop.stop();');
+        expect(source).toContain('this.clearLevelAdvanceTimer();\n        this.loop?.stop();');
         expect(source).toContain('if (!this.isRunning) return;');
     });
 });

@@ -36,4 +36,16 @@ describe('game controls metadata and help docs', () => {
         expect(guide).toContain('Keyboard');
         expect(guide).toContain('Touch');
     });
+
+    it('keeps a code-design note for every game cartridge', () => {
+        for (const game of GAME_REGISTRY.filter((entry) => entry.class)) {
+            const design = readFileSync(`src/games/${game.id}/DESIGN.md`, 'utf8');
+            expect(design).toContain(`# ${game.title} Code Design`);
+            expect(design).toContain('## Cartridge boundary');
+            expect(design).toContain('## Module responsibilities');
+            expect(design).toContain('## State model');
+            expect(design).toContain('## Rendering layers');
+            expect(design).toContain('## Current quality notes');
+        }
+    });
 });

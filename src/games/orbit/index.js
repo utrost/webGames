@@ -5,6 +5,7 @@ import { CanvasScaler } from '../../core/CanvasScaler.js';
 import { Physics } from './Physics.js';
 import { Sun, Planet, Comet, Projectile } from './Entities.js';
 import { Vector2 } from '../../core/Vector2.js';
+import { CONFIG } from './config.js';
 
 export class Orbit {
     constructor(canvasContainer, onGameOver) {
@@ -69,7 +70,7 @@ export class Orbit {
     update(dt) {
         if (this.gameOver || this.paused) return;
 
-        const timeScale = this.isDragging ? 0.2 : 1.0;
+        const timeScale = this.isDragging ? CONFIG.SLOW_MOTION_SCALE : 1.0;
         const simDt = dt * timeScale;
 
         this.waveTimer += simDt;
@@ -78,8 +79,8 @@ export class Orbit {
             this.spawnComet();
         }
 
-        if (this.waveDifficulty < 5) {
-            this.waveDifficulty += dt * 0.01;
+        if (this.waveDifficulty < CONFIG.MAX_DIFFICULTY) {
+            this.waveDifficulty += dt * CONFIG.DIFFICULTY_RAMP;
         }
 
         this.physics.update(this.bodies, simDt);
@@ -98,7 +99,7 @@ export class Orbit {
         for (let i = this.bodies.length - 1; i >= 0; i--) {
             const b = this.bodies[i];
             const dist = b.pos.dist(this.sun.pos);
-            if (dist > 1500) b.toBeRemoved = true;
+            if (dist > CONFIG.DESPAWN_DISTANCE) b.toBeRemoved = true;
             if (b.toBeRemoved) {
                 // Planet death visual/audio feedback
                 if (b.type === 'Planet') {
@@ -119,9 +120,16 @@ export class Orbit {
         }
 
         if (this.sun.hp <= 0) {
-            this.gameOver = true;
-            this.storage.saveHighScore('orbit', this.score);
+            this.endGame();
         }
+    }
+
+    endGame() {
+        if (this.gameOver) return;
+        this.gameOver = true;
+        this.storage.saveHighScore('orbit', this.score);
+        this.highScore = this.storage.getHighScore('orbit');
+        if (this.onGameOver) this.onGameOver();
     }
 
     render() {
@@ -148,7 +156,7 @@ export class Orbit {
 
         if (this.isDragging) {
             const diff = this.dragStart.clone().subtract(this.dragCurrent);
-            const launchVel = diff.scale(0.5);
+            const launchVel = diff.scale(CONFIG.LAUNCH_SCALE);
 
             const dummy = new Projectile(this.dragStart.x, this.dragStart.y);
             const path = this.physics.predict(this.bodies, dummy, launchVel, 60, 0.016);
@@ -265,7 +273,7 @@ export class Orbit {
             this.isDragging = false;
 
             const diff = this.dragStart.clone().subtract(this.dragCurrent);
-            const launchVel = diff.scale(0.5);
+            const launchVel = diff.scale(CONFIG.LAUNCH_SCALE);
             this.launchProjectile(this.dragStart, launchVel);
         };
 
@@ -326,7 +334,7 @@ export class Orbit {
         p.onCollision = (other) => {
             if (other.type === 'Comet') {
                 const multiplier = 1 + 0.5 * this.planetCount;
-                this.score += Math.floor(100 * multiplier);
+                this.score += Math.floor(CONFIG.COMET_SCORE * multiplier);
                 this.audio.playTone(800 + Math.random() * 400, 'sine', 0.1);
                 this.spawnParticles(other.pos.x, other.pos.y, '#e74c3c', 8);
             }
@@ -367,7 +375,7 @@ export class Orbit {
 
     spawnComet() {
         const angle = Math.random() * Math.PI * 2;
-        const dist = 600;
+        const dist = CONFIG.COMET_SPAWN_DIST;
         const spawnPos = new Vector2(
             this.width / 2 + Math.cos(angle) * dist,
             this.height / 2 + Math.sin(angle) * dist
@@ -377,7 +385,7 @@ export class Orbit {
 
         const target = this.sun.pos.clone();
         const dir = target.subtract(spawnPos).normalize();
-        const speed = 100 + Math.random() * 50;
+        const speed = CONFIG.COMET_SPEED_MIN + Math.random() * CONFIG.COMET_SPEED_RANGE;
         comet.setVelocity(dir.scale(speed));
 
         this.bodies.push(comet);

@@ -178,6 +178,7 @@ export class NeonBlocks {
         const type = this.bag.pop();
         const shape = SHAPES[type];
         return {
+            type,
             matrix: shape.matrix.map(row => [...row]),
             color: shape.color
         };
@@ -255,6 +256,7 @@ export class NeonBlocks {
     resetPiece() {
         this.player.matrix = this.nextPiece.matrix;
         this.player.color = this.nextPiece.color;
+        this.player.type = this.nextPiece.type;
         this.nextPiece = this._pullFromBag();
 
         this.player.pos.y = 0;
@@ -268,6 +270,7 @@ export class NeonBlocks {
         if (this.collide(this.grid, this.player)) {
             this.gameOver = true;
             this.storage.saveHighScore('neon-blocks', this.score);
+            this.highScore = this.storage.getHighScore('neon-blocks');
             if (this.onGameOver) this.onGameOver();
         }
     }
@@ -277,6 +280,7 @@ export class NeonBlocks {
         this.hasHeld = true;
 
         const currentPiece = {
+            type: this.player.type,
             matrix: this.player.matrix,
             color: this.player.color
         };
@@ -285,6 +289,7 @@ export class NeonBlocks {
             // Swap with held piece
             this.player.matrix = this.holdPiece.matrix;
             this.player.color = this.holdPiece.color;
+            this.player.type = this.holdPiece.type;
             this.player.pos.y = 0;
             this.player.pos.x = (this.cols / 2 | 0) - (this.player.matrix[0].length / 2 | 0);
             this.isLanding = false;
@@ -294,6 +299,7 @@ export class NeonBlocks {
             // No held piece — store current and get next
             this.player.matrix = this.nextPiece.matrix;
             this.player.color = this.nextPiece.color;
+            this.player.type = this.nextPiece.type;
             this.nextPiece = this._pullFromBag();
             this.player.pos.y = 0;
             this.player.pos.x = (this.cols / 2 | 0) - (this.player.matrix[0].length / 2 | 0);
@@ -325,8 +331,13 @@ export class NeonBlocks {
         const [m, o] = [player.matrix, player.pos];
         for (let y = 0; y < m.length; ++y) {
             for (let x = 0; x < m[y].length; ++x) {
-                if (m[y][x] !== 0 &&
-                    (arena[y + o.y] && arena[y + o.y][x + o.x]) !== null) {
+                if (m[y][x] === 0) continue;
+                const arenaY = y + o.y;
+                const arenaX = x + o.x;
+                if (arenaY >= arena.length || arenaX < 0 || arenaX >= arena[0].length) {
+                    return true;
+                }
+                if (arenaY >= 0 && arena[arenaY][arenaX] !== null) {
                     return true;
                 }
             }
@@ -399,7 +410,7 @@ export class NeonBlocks {
     }
 
     stop() {
-        this.loop.stop();
+        this.loop?.stop();
         this.scaler.destroy();
         this.canvas.remove();
         globalThis.removeEventListener('keydown', this.handleKey);

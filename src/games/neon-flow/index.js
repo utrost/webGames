@@ -80,6 +80,8 @@ export class NeonFlow {
     }
 
     resetGameState() {
+        this.clearLevelAdvanceTimer();
+        this.gameOver = false;
         this.currentLevelIndex = 0;
         this.totalMoves = 0;
         this.paused = false;
@@ -130,11 +132,10 @@ export class NeonFlow {
 
     loadLevel(index) {
         if (index >= Levels.length) {
-            this.storage.saveHighScore('neon-flow', this.totalMoves);
-            if (this.onGameOver) this.onGameOver();
+            this.completeCampaign();
             return;
         }
-        const level = Levels[index % Levels.length];
+        const level = Levels[index];
         this.grid = new Grid(level.rows, level.cols);
 
         level.tiles.forEach(t => {
@@ -150,6 +151,14 @@ export class NeonFlow {
         this.grid.calculateFlow();
     }
 
+    completeCampaign() {
+        if (this.gameOver) return;
+        this.gameOver = true;
+        this.storage.saveHighScore('neon-flow', this.totalMoves);
+        this.highScore = this.storage.getHighScore('neon-flow');
+        if (this.onGameOver) this.onGameOver();
+    }
+
     clearLevelAdvanceTimer() {
         if (!this.levelAdvanceTimer) return;
         clearTimeout(this.levelAdvanceTimer);
@@ -158,7 +167,7 @@ export class NeonFlow {
 
     stop() {
         this.clearLevelAdvanceTimer();
-        this.loop.stop();
+        this.loop?.stop();
         this.scaler.destroy();
         this.isRunning = false;
         window.removeEventListener('pointermove', this.inputHandler);
@@ -408,9 +417,6 @@ export class NeonFlow {
                     if (!this.isRunning) return;
                     this.levelAdvanceTimer = null;
                     this.currentLevelIndex++;
-                    if (this.currentLevelIndex >= Levels.length) {
-                        this.storage.saveHighScore('neon-flow', this.totalMoves);
-                    }
                     this.loadLevel(this.currentLevelIndex);
                 }, 1000);
             }

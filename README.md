@@ -69,7 +69,7 @@ src/
 
 Each game implements a standard interface (`constructor(container, onGameOver)`, `init()`, `stop()`) for lobby load/unload.
 
-See [architecture.md](architecture.md) for full details and [games.md](games.md) for game specs.
+See [architecture.md](architecture.md) for full details, [games.md](games.md) for game specs, [src/games/README.md](src/games/README.md) for the cartridge layout, and each game folder's `DESIGN.md` for code-level design notes.
 
 ## Development
 
@@ -89,7 +89,7 @@ npm test              # Run all tests once
 npm run test:watch    # Run tests in watch mode
 ```
 
-**Test coverage:** 244 tests across 26 test files covering the shared core, responsive layout contract, input modality support, controls/help documentation, and all six game cartridges.
+**Test coverage:** 254 tests across 26 test files covering the shared core, responsive layout contract, input modality support, controls/help documentation, lifecycle contracts, code-design documentation, and all six game cartridges.
 
 Key areas:
 - Core: Vector2, StorageManager, GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker, InputManager, AudioManager, CanvasScaler, ResponsiveLayout
