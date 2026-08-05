@@ -4,6 +4,8 @@
 
 A collection of six browser-based games built with vanilla JavaScript and HTML5 Canvas. Neon-retro aesthetic, no frameworks, minimal dependencies.
 
+![Neon Blocks gameplay screenshot showing the dark grid, glowing purple tetromino, and score panel.](docs/images/neon-blocks-screenshot.jpg)
+
 **Note:** Void Crawler has been split into its own standalone repository: [utrost/void-crawler](https://github.com/utrost/void-crawler).
 
 ## Games
@@ -85,7 +87,7 @@ npm test              # Run all tests once
 npm run test:watch    # Run tests in watch mode
 ```
 
-**Test coverage:** 214 tests across 18 test files covering the shared core, responsive layout contract, and all six game cartridges.
+**Test coverage:** 240 tests across 25 test files covering the shared core, responsive layout contract, input modality support, and all six game cartridges.
 
 Key areas:
 - Core: Vector2, StorageManager, GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker, InputManager, AudioManager, CanvasScaler, ResponsiveLayout
