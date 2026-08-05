@@ -1,4 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
+import { CosmicBreaker } from '../cosmic-breaker/index.js';
+import { NeonFlow } from '../neon-flow/index.js';
 import { Asteroids } from '../asteroids/index.js';
 import { NeonBlocks } from '../neon-blocks/index.js';
 import { Orbit } from '../orbit/index.js';
@@ -85,6 +87,35 @@ function installDom() {
 }
 
 describe('game input modality coverage', () => {
+    it('Cosmic Breaker starts from mouse/touch input before audio was initialized', () => {
+        const { container, restore } = installDom();
+        try {
+            const game = new CosmicBreaker(container, vi.fn());
+            game.balls = [{ active: false }];
+            game.serveBall = vi.fn();
+
+            expect(() => game.clickHandler({ preventDefault: vi.fn() })).not.toThrow();
+            expect(game.serveBall).toHaveBeenCalled();
+        } finally {
+            restore();
+        }
+    });
+
+    it('Neon Flow accepts mouse/touch rotation before audio was initialized', () => {
+        const { container, restore } = installDom();
+        try {
+            const game = new NeonFlow(container, vi.fn());
+            game.paused = false;
+            game.inputHandler = vi.fn();
+            game.onClick = vi.fn();
+
+            expect(() => game.clickHandler({ preventDefault: vi.fn(), clientX: 10, clientY: 10 })).not.toThrow();
+            expect(game.onClick).toHaveBeenCalled();
+        } finally {
+            restore();
+        }
+    });
+
     it('Asteroids exposes mouse pointer controls equivalent to touch regions', () => {
         const { container, restore } = installDom();
         try {

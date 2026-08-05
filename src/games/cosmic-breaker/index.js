@@ -70,9 +70,7 @@ export class CosmicBreaker {
         };
         this.clickHandler = (e) => {
             e.preventDefault();
-            if (this.audio.context.state === 'suspended') {
-                this.audio.context.resume();
-            }
+            this.audio.resume();
             if (this.balls.some(b => !b.active)) {
                 this.serveBall();
             }
@@ -88,9 +86,7 @@ export class CosmicBreaker {
             const touch = e.touches[0];
             const rect = this.canvas.getBoundingClientRect();
             this.mouseX = (touch.clientX - rect.left) * (this.width / rect.width);
-            if (this.audio.context.state === 'suspended') {
-                this.audio.context.resume();
-            }
+            this.audio.resume();
             if (this.balls.some(b => !b.active)) {
                 this.serveBall();
             }

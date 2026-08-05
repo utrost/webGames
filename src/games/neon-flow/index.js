@@ -61,9 +61,7 @@ export class NeonFlow {
         };
         this.clickHandler = (e) => {
             e.preventDefault();
-            if (this.audio.context.state === 'suspended') {
-                this.audio.context.resume();
-            }
+            this.audio.resume();
             if (!this.paused) {
                 this.inputHandler(e);
                 this.onClick();
@@ -73,9 +71,7 @@ export class NeonFlow {
             e.preventDefault();
             const touch = e.changedTouches[0];
             const evt = { clientX: touch.clientX, clientY: touch.clientY };
-            if (this.audio.context.state === 'suspended') {
-                this.audio.context.resume();
-            }
+            this.audio.resume();
             if (!this.paused) {
                 this.inputHandler(evt);
                 this.onClick();
@@ -118,9 +114,7 @@ export class NeonFlow {
 
             if (e.code === 'Space' || e.code === 'Enter') {
                 e.preventDefault();
-                if (this.audio.context.state === 'suspended') {
-                    this.audio.context.resume();
-                }
+                this.audio.resume();
                 this.onClickPos(this.cursor.r, this.cursor.c);
             }
         };

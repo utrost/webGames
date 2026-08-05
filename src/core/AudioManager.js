@@ -11,12 +11,18 @@ export class AudioManager {
     _ensureContext() {
         if (!this.context) {
             const AC = globalThis.AudioContext || globalThis.webkitAudioContext;
+            if (!AC) return null;
             this.context = new AC();
         }
         if (this.context.state === 'suspended') {
             this.context.resume();
         }
         return this.context;
+    }
+
+    /** Resume/create audio context from a user gesture without forcing callers to touch internals. */
+    resume() {
+        this._ensureContext();
     }
 
     /** @param {string} name @param {string} url */
@@ -37,6 +43,7 @@ export class AudioManager {
         if (AudioManager.masterVolume === 0) return;
         if (!this.sounds[name]) return;
         const ctx = this._ensureContext();
+        if (!ctx) return;
 
         const source = ctx.createBufferSource();
         source.buffer = this.sounds[name];
@@ -52,6 +59,7 @@ export class AudioManager {
     playTone(frequency, type = 'sine', duration = 0.1) {
         if (AudioManager.masterVolume === 0) return;
         const ctx = this._ensureContext();
+        if (!ctx) return;
 
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
