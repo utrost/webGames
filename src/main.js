@@ -9,6 +9,7 @@ import { registerServiceWorker } from './app/appPaths.js';
 import {
     createAchievementToast,
     createElement,
+    createControlsPanel,
     createErrorPanel,
     createGameCard,
     setArcadeHeading,
@@ -142,6 +143,7 @@ function loadGame(gameConfig) {
             checkAchievements();
         });
         activeGame.init();
+        gameContainer?.appendChild(createControlsPanel(gameConfig.controls));
         stats.startSession(gameConfig.id);
     } catch (err) {
         console.error(`Failed to initialize ${gameConfig.title}:`, err);
@@ -159,6 +161,7 @@ function returnToLobby() {
     backBtn?.remove();
     backBtn = null;
     document.getElementById('game-canvas-container')?.remove();
+    document.getElementById('controls-panel')?.remove();
     if (heading) setArcadeHeading(heading);
     setLobbyVisible(true);
     initLobby();

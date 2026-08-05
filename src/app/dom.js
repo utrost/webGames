@@ -52,6 +52,36 @@ export function createGameCard(game, highScore, onSelect) {
     return card;
 }
 
+export function createControlsPanel(controls = {}) {
+    const panel = createElement('details', {
+        id: 'controls-panel',
+        className: 'controls-panel',
+        attrs: { open: '' },
+    });
+    panel.append(createElement('summary', { text: 'Controls' }));
+
+    const grid = createElement('div', { className: 'controls-grid' });
+    const modes = [
+        ['mouse', 'Mouse'],
+        ['keyboard', 'Keyboard'],
+        ['touch', 'Touch'],
+    ];
+
+    modes.forEach(([mode, label]) => {
+        const entries = controls[mode] || [];
+        const list = createElement('ul');
+        entries.forEach((entry) => list.append(createElement('li', { text: entry })));
+
+        grid.append(createElement('section', { className: 'control-mode' }, [
+            createElement('h3', { text: label }),
+            list,
+        ]));
+    });
+
+    panel.append(grid);
+    return panel;
+}
+
 export function createAchievementToast(achievement) {
     return createElement('div', { className: 'achievement-toast' }, [
         createElement('span', { className: 'achievement-icon', text: '★' }),

@@ -69,9 +69,54 @@ header h1 {
   width: 100%;
   flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: stretch;
   padding-inline: var(--page-gutter);
+}
+
+.controls-panel {
+  width: min(100%, 900px);
+  align-self: center;
+  margin: 10px 0 calc(14px + var(--safe-bottom));
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 243, 255, 0.45);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #ddd;
+  text-align: left;
+  font-size: 0.78rem;
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.12);
+}
+
+.controls-panel summary {
+  min-height: 32px;
+  color: var(--neon-blue);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.control-mode h3 {
+  margin: 6px 0;
+  color: var(--neon-pink);
+  font-size: 0.85rem;
+}
+
+.control-mode ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.control-mode li {
+  margin: 3px 0;
+  line-height: 1.25;
 }
 
 .lobby-menu {
@@ -468,6 +513,21 @@ header h1 {
 
   .setting-row input[type="range"] {
     width: min(180px, 52vw);
+  }
+
+  .controls-panel {
+    font-size: 0.72rem;
+    margin-inline: 8px;
+    padding: 8px 10px;
+  }
+
+  .controls-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .control-mode h3 {
+    margin-top: 8px;
   }
 
   footer p {
