@@ -2,6 +2,7 @@ import { CosmicBreaker } from '../games/cosmic-breaker/index.js';
 import { NeonFlow } from '../games/neon-flow/index.js';
 import { Orbit } from '../games/orbit/index.js';
 import { Asteroids } from '../games/asteroids/index.js';
+import { StarfallArmada } from '../games/starfall-armada/index.js';
 import { NeonBlocks } from '../games/neon-blocks/index.js';
 import { ElementalSandbox } from '../games/elemental-sandbox/index.js';
 
@@ -36,6 +37,14 @@ export const GAME_REGISTRY = [
             mouse: ['Hold left/center/right screen regions for rotate, thrust, and fire'],
             keyboard: ['Arrow Left/Right: rotate', 'Arrow Up: thrust', 'Space: fire', 'R: restart after game over', 'Esc: pause'],
             touch: ['Left third: rotate left', 'Middle top: thrust', 'Middle bottom: rotate right', 'Right third: fire'],
+        },
+    },
+    {
+        id: 'starfall-armada', title: 'Starfall Armada', description: 'Defend the skyline from a descending neon armada.', genre: 'Shooter', icon: '\u25b2', color: '#ffaa00', class: StarfallArmada,
+        controls: {
+            mouse: ['Hold lower-left/lower-right screen regions to move', 'Hold the lower center to fire'],
+            keyboard: ['Arrow Left/Right: move defender', 'Space: fire', 'R: restart after game over', 'Esc: pause'],
+            touch: ['Lower left/right: move defender', 'Lower center: fire'],
         },
     },
     {

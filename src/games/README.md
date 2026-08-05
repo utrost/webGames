@@ -12,6 +12,7 @@ All individual games live in their own subdirectories here. Each playable game i
 | `neon-blocks/` | Neon Blocks | `index.js`, `Shapes.js`, `config.js`, `DESIGN.md` |
 | `neon-flow/` | Neon Flow | `index.js`, `Logic.js`, `levels.js`, `config.js`, `DESIGN.md` |
 | `orbit/` | Orbit | `index.js`, `Physics.js`, `Entities.js`, `config.js`, `DESIGN.md` |
+| `starfall-armada/` | Starfall Armada | `index.js`, `config.js`, `DESIGN.md` |
 
 Each game folder includes a `DESIGN.md` that documents the current code design: cartridge boundary, module responsibilities, state model, update order, input model, render layers, and known quality notes.
 

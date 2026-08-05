@@ -1,6 +1,6 @@
 # 🎮 Game Library & Status
 
-This document tracks the current implementation status of the six released games in the Web Games Arcade project, plus the quality gate for future arcade classics.
+This document tracks the current implementation status of the seven released games in the Web Games Arcade project, plus the quality gate for future arcade classics.
 
 Void Crawler has moved to its own standalone repository: [utrost/void-crawler](https://github.com/utrost/void-crawler).
 
@@ -13,6 +13,7 @@ Void Crawler has moved to its own standalone repository: [utrost/void-crawler](h
 | **Elemental Sandbox** | Simulation / Creational | Canvas + cellular automata | 🟢 Release v1.0 |
 | **Orbit** | Arcade / Skill | Canvas + Verlet/N-body physics | 🟢 Release v1.0 |
 | **Asteroids** | Arcade / Shooter | Canvas + entity classes | 🟢 Release v1.0 |
+| **Starfall Armada** | Arcade / Fixed shooter | Canvas + tested formation logic | 🟢 Release v1.0 |
 | **Neon Blocks** | Puzzle / Arcade | Canvas + grid/piece rules | 🟢 Release v1.0 |
 
 Before adding more classics, use the [new-game checklist](docs/new-game-checklist.md) and copy-start from `src/games/_template/`.
@@ -83,7 +84,20 @@ Before adding more classics, use the [new-game checklist](docs/new-game-checklis
   - Lives, respawn timer, invincibility, pause, and restart.
 - **Code design**: See `src/games/asteroids/DESIGN.md`.
 
-## 6. Neon Blocks
+## 6. Starfall Armada
+
+- **Genre**: Arcade / Fixed Shooter
+- **Status**: 🟢 Released v1.0
+- **Concept**: A Space-Invaders-inspired skyline defense game with a descending neon armada, single-shot pressure, alien bombs, waves, and high-score chase.
+- **Mechanics**:
+  - Defender moves horizontally and is clamped to the playfield.
+  - One active player shot at a time.
+  - Alien formation reverses at edges and descends toward the breach line.
+  - Bottom aliens fire bombs.
+  - Clearing a formation starts a faster wave.
+- **Code design**: See `src/games/starfall-armada/DESIGN.md`.
+
+## 7. Neon Blocks
 
 - **Genre**: Puzzle / Arcade
 - **Status**: 🟢 Released v1.0
@@ -99,10 +113,10 @@ Before adding more classics, use the [new-game checklist](docs/new-game-checklis
 
 Recommended implementation order:
 
-1. **Pong / Paddle Duel** — smallest classic; validates the cartridge template.
-2. **Snake** — pure grid logic and deterministic movement tests.
-3. **Space Invaders** — entity waves and shooter patterns.
-4. **Frogger** — lane/grid timing and collision rules.
-5. **Maze chaser** — defer until pathfinding/AI patterns are cleaner.
+1. **Maze chaser** — Pac-Man-inspired; defer until tile-map and chase-AI helpers exist.
+2. **Climber** — Donkey-Kong-inspired; defer until platform collision and level-script helpers exist.
+3. **Frogger** — lane/grid timing and collision rules.
+4. **Pong / Paddle Duel** — still useful as a tiny two-player/control experiment.
+5. **Snake** — pure grid logic and deterministic movement tests.
 
 Each future game must pass the checklist before being marked released.

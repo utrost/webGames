@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { CosmicBreaker } from '../cosmic-breaker/index.js';
 import { NeonFlow } from '../neon-flow/index.js';
 import { Asteroids } from '../asteroids/index.js';
+import { StarfallArmada } from '../starfall-armada/index.js';
 import { NeonBlocks } from '../neon-blocks/index.js';
 import { Orbit } from '../orbit/index.js';
 import { ElementalSandbox } from '../elemental-sandbox/index.js';
@@ -130,6 +131,30 @@ describe('game input modality coverage', () => {
 
             game.handlePointerUp({ preventDefault: vi.fn() });
             expect(game.touchState).toEqual({ left: false, right: false, thrust: false, fire: false });
+        } finally {
+            restore();
+        }
+    });
+
+    it('Starfall Armada maps pointer/touch regions to move and fire controls', () => {
+        const { container, restore } = installDom();
+        try {
+            const game = new StarfallArmada(container, vi.fn());
+            game.audio.playTone = vi.fn();
+            game.resetGameState();
+            game.setupInput();
+
+            game.pointerDownHandler({ preventDefault: vi.fn(), clientX: 100, clientY: 550 });
+            expect(game.touchState.left).toBe(true);
+
+            game.pointerMoveHandler({ preventDefault: vi.fn(), clientX: 700, clientY: 550 });
+            expect(game.touchState.right).toBe(true);
+
+            game.pointerMoveHandler({ preventDefault: vi.fn(), clientX: 400, clientY: 550 });
+            expect(game.playerShots).toHaveLength(1);
+
+            game.pointerUpHandler({ preventDefault: vi.fn() });
+            expect(game.touchState).toEqual({ left: false, right: false, fire: false });
         } finally {
             restore();
         }

@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 
 const restartableGames = [
     'asteroids',
+    'starfall-armada',
     'cosmic-breaker',
     'neon-blocks',
     'neon-flow',

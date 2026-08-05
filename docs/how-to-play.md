@@ -97,6 +97,28 @@ Touch:
 - Right third: fire.
 - Multiple simultaneous touches can combine actions.
 
+## Starfall Armada
+
+Goal: hold the defense line against a descending neon armada. Clear each formation before it reaches the breach line.
+
+Mouse:
+
+- Hold the lower-left region to move left.
+- Hold the lower-right region to move right.
+- Hold the lower-center region to fire.
+
+Keyboard:
+
+- `Arrow Left` / `Arrow Right`: move defender.
+- `Space`: fire one active shot.
+- `Esc`: pause/resume.
+- `R`: restart after game over.
+
+Touch:
+
+- Lower left/right: move defender.
+- Lower center: fire.
+
 ## Neon Blocks
 
 Goal: stack tetrominoes, clear lines, use hold when useful, and survive as the drop speed increases.

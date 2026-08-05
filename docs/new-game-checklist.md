@@ -88,11 +88,11 @@ After a production build, run a browser smoke on local preview and then on the d
 
 Use one small classic to prove the flow before harder games:
 
-1. **Pong / Paddle Duel** — smallest cartridge, validates lifecycle/template.
-2. **Snake** — validates pure grid logic and deterministic movement tests.
-3. **Space Invaders** — validates entity waves and shooter patterns.
-4. **Frogger** — validates lane/grid logic.
-5. **Maze chaser** — defer until pathfinding/AI patterns are cleaner.
+1. **Maze chaser** — Pac-Man-inspired; defer until pathfinding/AI patterns are cleaner.
+2. **Climber** — Donkey-Kong-inspired; defer until platform collision and level scripting patterns exist.
+3. **Frogger** — validates lane/grid logic.
+4. **Pong / Paddle Duel** — smallest cartridge for multiplayer/control experiments.
+5. **Snake** — validates pure grid logic and deterministic movement tests.
 
 ## Non-negotiables
 
