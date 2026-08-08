@@ -204,7 +204,8 @@ describe('Starfall Armada mechanics', () => {
         try {
             expect(game.mothership).toBeNull();
             game.updateMothership(15);
-            expect(game.mothership).toMatchObject({ y: 42, width: 64, height: 24, points: 250 });
+            expect(game.mothership).toMatchObject({ y: 68, width: 64, height: 24, points: 250 });
+            expect(game.aliens[0].y).toBeGreaterThan(game.mothership.y + game.mothership.height);
             const startX = game.mothership.x;
             game.updateMothership(1);
             expect(game.mothership.x).not.toBe(startX);
