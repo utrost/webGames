@@ -257,7 +257,7 @@ export class StarfallArmada {
         if (this.alienFireTimer > 0) return;
 
         const shooters = this.bottomAliensByColumn();
-        const shooter = shooters[Math.floor(Math.random() * shooters.length)];
+        const shooter = this.selectAlienShooter(shooters);
         this.alienShots.push({
             x: shooter.x + shooter.width / 2 - 3,
             y: shooter.y + shooter.height,
@@ -276,6 +276,16 @@ export class StarfallArmada {
             if (!existing || alien.y > existing.y) byColumn.set(alien.col, alien);
         }
         return Array.from(byColumn.values());
+    }
+
+    selectAlienShooter(shooters) {
+        const playerCenter = this.player.x + this.player.width / 2;
+        const safeShooters = shooters.filter((alien) => {
+            const alienCenter = alien.x + alien.width / 2;
+            return Math.abs(alienCenter - playerCenter) > 70;
+        });
+        const candidates = safeShooters.length > 0 ? safeShooters : shooters;
+        return candidates[Math.floor(Math.random() * candidates.length)];
     }
 
     firePlayerShot() {

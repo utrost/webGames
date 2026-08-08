@@ -147,6 +147,19 @@ describe('Starfall Armada mechanics', () => {
         }
     });
 
+    it('gives an idle defender a fair opening window before alien bombs can end the run', () => {
+        const { game, restore } = makeGame();
+        const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+        try {
+            for (let i = 0; i < 200; i++) game.update(0.1);
+            expect(game.player.lives).toBe(3);
+            expect(game.gameOver).toBe(false);
+        } finally {
+            randomSpy.mockRestore();
+            restore();
+        }
+    });
+
     it('ends the game when aliens reach the defender line', () => {
         const { game, restore } = makeGame();
         try {

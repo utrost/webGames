@@ -71,5 +71,6 @@ The rendering code reads current state only; gameplay mutation stays in update/c
 - The defender can only keep one shot active, preserving the classic pressure rhythm.
 - Alien formation reversal and descent are centralized in `updateFormation()`.
 - Only bottom aliens in each column can fire, making bombs visually fair.
+- Alien fire avoids directly targeting the idle defender when other shooter columns are available, preserving a fair opening window.
 - Keyboard, mouse, and touch all feed the same `keys`/`touchState` movement and `firePlayerShot()` behavior.
 - Future improvement: add destructible shields as their own tested data model before rendering damage masks.

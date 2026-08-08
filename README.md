@@ -89,7 +89,7 @@ npm test              # Run all tests once
 npm run test:watch    # Run tests in watch mode
 ```
 
-**Test coverage:** 263 tests across 27 test files covering the shared core, responsive layout contract, input modality support, controls/help documentation, lifecycle contracts, code-design documentation, new-game quality gate documentation, and all seven game cartridges.
+**Test coverage:** 264 tests across 27 test files covering the shared core, responsive layout contract, input modality support, controls/help documentation, lifecycle contracts, code-design documentation, new-game quality gate documentation, and all seven game cartridges.
 
 Key areas:
 - Core: Vector2, StorageManager, GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker, InputManager, AudioManager, CanvasScaler, ResponsiveLayout
