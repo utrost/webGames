@@ -12,7 +12,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - **Starfall Armada** v1.0 — Space-Invaders-inspired fixed shooter with tested formation movement, one-shot pressure, alien bombs, waves, keyboard/mouse/touch controls, and high-score persistence.
-- Comprehensive test suite: 264 tests across 27 test files
+- Starfall Armada extras: destructible shield bunkers and a travelling 250-point bonus mothership.
+- Comprehensive test suite: 268 tests across 27 test files
   - Core engine tests: GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker
   - Game logic tests: Asteroids Entities, Cosmic Breaker levels/config, Neon Blocks Shapes, Orbit Physics/Entities, Elemental Sandbox Simulation/Elements
 - Testing section in README with full test coverage table

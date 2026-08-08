@@ -160,6 +160,59 @@ describe('Starfall Armada mechanics', () => {
         }
     });
 
+    it('starts each run with destructible shield blocks', () => {
+        const { game, restore } = makeGame();
+        try {
+            expect(game.shields.length).toBeGreaterThan(20);
+            expect(new Set(game.shields.map((shield) => shield.group)).size).toBe(4);
+            expect(game.shields.every((shield) => shield.health === 2)).toBe(true);
+        } finally {
+            restore();
+        }
+    });
+
+    it('lets shields absorb bombs before the defender is hit', () => {
+        const { game, restore } = makeGame();
+        try {
+            const shield = game.shields[0];
+            game.alienShots = [{ x: shield.x + 2, y: shield.y + 2, width: 6, height: 14, vx: 0, vy: 210 }];
+            game.handleCollisions();
+            expect(game.player.lives).toBe(3);
+            expect(game.alienShots).toHaveLength(0);
+            expect(shield.health).toBe(1);
+        } finally {
+            restore();
+        }
+    });
+
+    it('awards a bonus when the player shoots the mothership', () => {
+        const { game, restore } = makeGame();
+        try {
+            game.mothership = { x: 100, y: 45, width: 64, height: 24, vx: 80, points: 250 };
+            game.playerShots = [{ x: 120, y: 50, width: 4, height: 14, vx: 0, vy: -520 }];
+            game.handleCollisions();
+            expect(game.score).toBe(250);
+            expect(game.mothership).toBeNull();
+            expect(game.playerShots).toHaveLength(0);
+        } finally {
+            restore();
+        }
+    });
+
+    it('launches a travelling mothership bonus target on a timer', () => {
+        const { game, restore } = makeGame();
+        try {
+            expect(game.mothership).toBeNull();
+            game.updateMothership(15);
+            expect(game.mothership).toMatchObject({ y: 42, width: 64, height: 24, points: 250 });
+            const startX = game.mothership.x;
+            game.updateMothership(1);
+            expect(game.mothership.x).not.toBe(startX);
+        } finally {
+            restore();
+        }
+    });
+
     it('ends the game when aliens reach the defender line', () => {
         const { game, restore } = makeGame();
         try {

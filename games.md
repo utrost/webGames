@@ -88,12 +88,14 @@ Before adding more classics, use the [new-game checklist](docs/new-game-checklis
 
 - **Genre**: Arcade / Fixed Shooter
 - **Status**: 🟢 Released v1.0
-- **Concept**: A Space-Invaders-inspired skyline defense game with a descending neon armada, single-shot pressure, alien bombs, waves, and high-score chase.
+- **Concept**: A Space-Invaders-inspired skyline defense game with a descending neon armada, shield bunkers, a bonus mothership, single-shot pressure, alien bombs, waves, and high-score chase.
 - **Mechanics**:
   - Defender moves horizontally and is clamped to the playfield.
   - One active player shot at a time.
   - Alien formation reverses at edges and descends toward the breach line.
   - Bottom aliens fire bombs.
+  - Destructible shield blocks absorb player shots and alien bombs.
+  - A travelling mothership offers a 250-point bonus target.
   - Clearing a formation starts a faster wave.
 - **Code design**: See `src/games/starfall-armada/DESIGN.md`.
 

@@ -99,7 +99,7 @@ Touch:
 
 ## Starfall Armada
 
-Goal: hold the defense line against a descending neon armada. Clear each formation before it reaches the breach line.
+Goal: hold the defense line against a descending neon armada. Use destructible shield bunkers for cover, pick off the bonus mothership when it crosses the top, and clear each formation before it reaches the breach line.
 
 Mouse:
 

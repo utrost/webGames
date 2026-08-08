@@ -55,6 +55,8 @@ export class StarfallArmada {
         this.formationSpeed = CONFIG.FORMATION_SPEED;
         this.nextWaveTimer = 0;
         this.alienFireTimer = CONFIG.ALIEN_FIRE_INTERVAL;
+        this.mothership = null;
+        this.mothershipTimer = CONFIG.MOTHERSHIP_INTERVAL;
         this.touchState = { left: false, right: false, fire: false };
         this.keys = {};
         this.player = {
@@ -66,6 +68,7 @@ export class StarfallArmada {
             invincible: 0,
         };
         this.spawnFormation();
+        this.spawnShields();
     }
 
     init() {
@@ -198,6 +201,31 @@ export class StarfallArmada {
         }
     }
 
+    spawnShields() {
+        this.shields = [];
+        const groupSpacing = this.width / (CONFIG.SHIELD_GROUPS + 1);
+        const blockWidth = CONFIG.SHIELD_BLOCK_WIDTH;
+        const blockHeight = CONFIG.SHIELD_BLOCK_HEIGHT;
+        const shieldWidth = CONFIG.SHIELD_BLOCK_COLS * blockWidth;
+
+        for (let group = 0; group < CONFIG.SHIELD_GROUPS; group++) {
+            const originX = groupSpacing * (group + 1) - shieldWidth / 2;
+            for (let row = 0; row < CONFIG.SHIELD_BLOCK_ROWS; row++) {
+                for (let col = 0; col < CONFIG.SHIELD_BLOCK_COLS; col++) {
+                    if (row === CONFIG.SHIELD_BLOCK_ROWS - 1 && (col === 0 || col === CONFIG.SHIELD_BLOCK_COLS - 1)) continue;
+                    this.shields.push({
+                        x: originX + col * blockWidth,
+                        y: CONFIG.SHIELD_Y + row * blockHeight,
+                        width: blockWidth - 2,
+                        height: blockHeight - 2,
+                        group,
+                        health: CONFIG.SHIELD_HEALTH,
+                    });
+                }
+            }
+        }
+    }
+
     update(dt) {
         if (this.gameOver || this.paused) return;
 
@@ -205,6 +233,7 @@ export class StarfallArmada {
         this.updateShots(dt);
         this.updateFormation(dt);
         this.updateAlienFire(dt);
+        this.updateMothership(dt);
         this.handleCollisions();
         this.updateExplosions(dt);
         this.checkWaveOrDefeat(dt);
@@ -269,6 +298,29 @@ export class StarfallArmada {
         this.alienFireTimer = Math.max(0.35, CONFIG.ALIEN_FIRE_INTERVAL - this.wave * 0.08);
     }
 
+    updateMothership(dt) {
+        if (this.mothership) {
+            this.mothership.x += this.mothership.vx * dt;
+            if (this.mothership.x > this.width + 20 || this.mothership.x + this.mothership.width < -20) {
+                this.mothership = null;
+                this.mothershipTimer = CONFIG.MOTHERSHIP_INTERVAL;
+            }
+            return;
+        }
+
+        this.mothershipTimer -= dt;
+        if (this.mothershipTimer > 0) return;
+        const fromLeft = Math.random() >= 0.5;
+        this.mothership = {
+            x: fromLeft ? -CONFIG.MOTHERSHIP_WIDTH : this.width,
+            y: CONFIG.MOTHERSHIP_Y,
+            width: CONFIG.MOTHERSHIP_WIDTH,
+            height: CONFIG.MOTHERSHIP_HEIGHT,
+            vx: fromLeft ? CONFIG.MOTHERSHIP_SPEED : -CONFIG.MOTHERSHIP_SPEED,
+            points: CONFIG.MOTHERSHIP_POINTS,
+        };
+    }
+
     bottomAliensByColumn() {
         const byColumn = new Map();
         for (const alien of this.aliens) {
@@ -303,7 +355,24 @@ export class StarfallArmada {
     }
 
     handleCollisions() {
-        for (const shot of this.playerShots) {
+        for (const shot of [...this.playerShots]) {
+            const shield = this.shields.find((candidate) => rectsOverlap(shot, candidate));
+            if (shield) {
+                this.damageShield(shield);
+                this.playerShots = this.playerShots.filter((candidate) => candidate !== shot);
+                continue;
+            }
+
+            if (this.mothership && rectsOverlap(shot, this.mothership)) {
+                this.score += this.mothership.points;
+                this.explosions.push({ x: this.mothership.x + this.mothership.width / 2, y: this.mothership.y + this.mothership.height / 2, time: 0.5 });
+                this.mothership = null;
+                this.mothershipTimer = CONFIG.MOTHERSHIP_INTERVAL;
+                this.playerShots = this.playerShots.filter((candidate) => candidate !== shot);
+                this.audio.playTone(920, 'triangle', 0.16);
+                continue;
+            }
+
             const alien = this.aliens.find((candidate) => rectsOverlap(shot, candidate));
             if (!alien) continue;
             this.score += alien.points;
@@ -314,11 +383,26 @@ export class StarfallArmada {
             break;
         }
 
+        for (const shot of [...this.alienShots]) {
+            const shield = this.shields.find((candidate) => rectsOverlap(shot, candidate));
+            if (shield) {
+                this.damageShield(shield);
+                this.alienShots = this.alienShots.filter((candidate) => candidate !== shot);
+            }
+        }
+
         if (this.player.invincible > 0) return;
         const playerHit = this.alienShots.find((shot) => rectsOverlap(shot, this.player));
         if (playerHit) {
             this.alienShots = this.alienShots.filter((shot) => shot !== playerHit);
             this.loseLife();
+        }
+    }
+
+    damageShield(shield) {
+        shield.health -= 1;
+        if (shield.health <= 0) {
+            this.shields = this.shields.filter((candidate) => candidate !== shield);
         }
     }
 
@@ -371,6 +455,8 @@ export class StarfallArmada {
     render() {
         this.renderBackground();
         this.renderDefenseLine();
+        this.renderMothership();
+        this.renderShields();
         this.renderPlayer();
         this.renderAliens();
         this.renderShots();
@@ -396,6 +482,25 @@ export class StarfallArmada {
         this.ctx.lineTo(this.width, this.defenseLine);
         this.ctx.stroke();
         this.ctx.setLineDash?.([]);
+    }
+
+    renderMothership() {
+        if (!this.mothership) return;
+        this.ctx.fillStyle = '#ff3366';
+        this.ctx.fillRect(this.mothership.x, this.mothership.y, this.mothership.width, this.mothership.height);
+        this.ctx.fillStyle = '#ffaa00';
+        this.ctx.fillRect(this.mothership.x + 10, this.mothership.y + 7, this.mothership.width - 20, 5);
+        this.ctx.fillStyle = '#f8f8ff';
+        this.ctx.font = '12px monospace';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText('250', this.mothership.x + this.mothership.width / 2, this.mothership.y + 18);
+    }
+
+    renderShields() {
+        for (const shield of this.shields) {
+            this.ctx.fillStyle = shield.health > 1 ? '#00ff88' : '#ffaa00';
+            this.ctx.fillRect(shield.x, shield.y, shield.width, shield.height);
+        }
     }
 
     renderPlayer() {
