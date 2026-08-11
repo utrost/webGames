@@ -3,6 +3,7 @@ import { NeonFlow } from '../games/neon-flow/index.js';
 import { Orbit } from '../games/orbit/index.js';
 import { Asteroids } from '../games/asteroids/index.js';
 import { StarfallArmada } from '../games/starfall-armada/index.js';
+import { CircuitChase } from '../games/circuit-chase/index.js';
 import { NeonBlocks } from '../games/neon-blocks/index.js';
 import { ElementalSandbox } from '../games/elemental-sandbox/index.js';
 
@@ -45,6 +46,14 @@ export const GAME_REGISTRY = [
             mouse: ['Hold lower-left/lower-right screen regions to move', 'Hold the lower center to fire'],
             keyboard: ['Arrow Left/Right: move defender', 'Space: fire', 'R: restart after game over', 'Esc: pause'],
             touch: ['Lower left/right: move defender', 'Lower center: fire'],
+        },
+    },
+    {
+        id: 'circuit-chase', title: 'Circuit Chase', description: 'Outrun glitch hunters through a neon circuit maze.', genre: 'Maze Chase', icon: '\u25cf', color: '#ffff00', class: CircuitChase,
+        controls: {
+            mouse: ['Drag/swipe on the maze to queue the next turn'],
+            keyboard: ['Arrow keys or WASD: queue turns', 'Esc: pause', 'R: restart after game over'],
+            touch: ['Swipe on the maze to queue the next turn'],
         },
     },
     {

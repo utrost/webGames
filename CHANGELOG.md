@@ -7,13 +7,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Changed
+
 - Split Void Crawler into its own standalone repository: https://github.com/utrost/void-crawler
-- Web Games Arcade now contains seven compact arcade cartridges.
+- Web Games Arcade now contains eight compact arcade cartridges.
 
 ### Added
+- **Circuit Chase** v1.0 — Pac-Man-inspired original maze chase with tile-map parsing, renderer-free pathfinding helpers, dot/power-node collection, frightened hunter scoring, keyboard/mouse/touch controls, and high-score persistence.
 - **Starfall Armada** v1.0 — Space-Invaders-inspired fixed shooter with tested formation movement, one-shot pressure, alien bombs, waves, keyboard/mouse/touch controls, and high-score persistence.
 - Starfall Armada extras: destructible shield bunkers and a travelling 250-point bonus mothership.
-- Comprehensive test suite: 268 tests across 27 test files
+- Comprehensive test suite: 278 tests across 29 test files
   - Core engine tests: GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker
   - Game logic tests: Asteroids Entities, Cosmic Breaker levels/config, Neon Blocks Shapes, Orbit Physics/Entities, Elemental Sandbox Simulation/Elements
 - Testing section in README with full test coverage table

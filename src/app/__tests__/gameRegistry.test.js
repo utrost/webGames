@@ -2,14 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { GAME_REGISTRY, getPlayableGames } from '../gameRegistry.js';
 
 describe('game registry', () => {
-  it('keeps the arcade focused on seven playable cartridges', () => {
-    expect(getPlayableGames()).toHaveLength(7);
+  it('keeps the arcade focused on eight playable cartridges', () => {
+    expect(getPlayableGames()).toHaveLength(8);
     expect(GAME_REGISTRY.map((game) => game.id)).toEqual([
       'cosmic-breaker',
       'neon-flow',
       'orbit',
       'asteroids',
       'starfall-armada',
+      'circuit-chase',
       'neon-blocks',
       'elemental-sandbox',
     ]);

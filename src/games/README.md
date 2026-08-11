@@ -7,6 +7,7 @@ All individual games live in their own subdirectories here. Each playable game i
 | Directory | Game | Key Modules |
 |---|---|---|
 | `asteroids/` | Asteroids | `index.js`, `Entities.js`, `config.js`, `DESIGN.md` |
+| `circuit-chase/` | Circuit Chase | `index.js`, `Logic.js`, `levels.js`, `config.js`, `DESIGN.md` |
 | `cosmic-breaker/` | Cosmic Breaker | `index.js`, `levels.js`, `config.js`, `DESIGN.md` |
 | `elemental-sandbox/` | Elemental Sandbox | `index.js`, `Simulation.js`, `Elements.js`, `config.js`, `DESIGN.md` |
 | `neon-blocks/` | Neon Blocks | `index.js`, `Shapes.js`, `config.js`, `DESIGN.md` |

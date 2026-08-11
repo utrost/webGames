@@ -1,6 +1,6 @@
 # 🎮 Game Library & Status
 
-This document tracks the current implementation status of the seven released games in the Web Games Arcade project, plus the quality gate for future arcade classics.
+This document tracks the current implementation status of the eight released games in the Web Games Arcade project, plus the quality gate for future arcade classics.
 
 Void Crawler has moved to its own standalone repository: [utrost/void-crawler](https://github.com/utrost/void-crawler).
 
@@ -13,7 +13,8 @@ Void Crawler has moved to its own standalone repository: [utrost/void-crawler](h
 | **Elemental Sandbox** | Simulation / Creational | Canvas + cellular automata | 🟢 Release v1.0 |
 | **Orbit** | Arcade / Skill | Canvas + Verlet/N-body physics | 🟢 Release v1.0 |
 | **Asteroids** | Arcade / Shooter | Canvas + entity classes | 🟢 Release v1.0 |
-| **Starfall Armada** | Arcade / Fixed shooter | Canvas + tested formation logic | 🟢 Release v1.0 |
+| **Starfall Armada** | Arcade / Fixed shooter | Canvas + tested formation logic | 🟢 Release v1.1 |
+| **Circuit Chase** | Arcade / Maze chase | Canvas + tile-map/pathfinding helpers | 🟢 Release v1.0 |
 | **Neon Blocks** | Puzzle / Arcade | Canvas + grid/piece rules | 🟢 Release v1.0 |
 
 Before adding more classics, use the [new-game checklist](docs/new-game-checklist.md) and copy-start from `src/games/_template/`.
@@ -99,7 +100,22 @@ Before adding more classics, use the [new-game checklist](docs/new-game-checklis
   - Clearing a formation starts a faster wave.
 - **Code design**: See `src/games/starfall-armada/DESIGN.md`.
 
-## 7. Neon Blocks
+## 7. Circuit Chase
+
+- **Genre**: Arcade / Maze Chase
+- **Status**: Release v1.0
+- **Core loop**: collect score dots in a neon circuit maze while four glitch hunters chase the player across the grid.
+- **Architecture**:
+  - `Logic.js` parses tile maps, checks walkability, steps grid positions, and chooses hunter directions with shortest-path search.
+  - `levels.js` keeps the ASCII map as the source of truth.
+  - `index.js` handles cartridge lifecycle, scoring, lives, rendering, high scores, and input adapters.
+- **Features**:
+  - Dots, power nodes, frightened hunters, hunter bonus scoring, lives, high score, pause, restart.
+  - Keyboard turn queue plus mouse/touch swipe controls.
+  - Horizontal tunnel wrapping.
+- **Code design**: See `src/games/circuit-chase/DESIGN.md`.
+
+## 8. Neon Blocks
 
 - **Genre**: Puzzle / Arcade
 - **Status**: 🟢 Released v1.0
@@ -115,9 +131,8 @@ Before adding more classics, use the [new-game checklist](docs/new-game-checklis
 
 Recommended implementation order:
 
-1. **Maze chaser** — Pac-Man-inspired; defer until tile-map and chase-AI helpers exist.
-2. **Climber** — Donkey-Kong-inspired; defer until platform collision and level-script helpers exist.
-3. **Frogger** — lane/grid timing and collision rules.
+1. **Climber** — Donkey-Kong-inspired; defer until platform collision and level-script helpers exist.
+2. **Frogger** — lane/grid timing and collision rules.
 4. **Pong / Paddle Duel** — still useful as a tiny two-player/control experiment.
 5. **Snake** — pure grid logic and deterministic movement tests.
 

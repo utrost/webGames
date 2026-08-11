@@ -119,6 +119,26 @@ Touch:
 - Lower left/right: move defender.
 - Lower center: fire.
 
+## Circuit Chase
+
+Goal: collect all score dots in the circuit maze while four glitch hunters chase you. Power nodes flip the hunters into frightened mode for a short bonus window.
+
+Keyboard:
+- Arrow keys or WASD: queue the next turn.
+- Esc: pause/resume.
+- R: restart after game over.
+
+Mouse:
+- Drag/swipe on the maze to queue the next turn.
+
+Touch:
+- Swipe on the maze to queue the next turn.
+
+Tips:
+- Turns are queued, so press or swipe slightly before an intersection.
+- Use power nodes when hunters are close, then eat frightened hunters for bonus points.
+- The side tunnels wrap across the maze.
+
 ## Neon Blocks
 
 Goal: stack tetrominoes, clear lines, use hold when useful, and survive as the drop speed increases.

@@ -24,6 +24,7 @@ src/
 ├── ui/                      # Shared UI Components (Buttons, Overlays)
 └── games/                   # Game Cartridges
     ├── asteroids/           # Neon vector shooter
+    ├── circuit-chase/       # Maze chase with tile-map/pathfinding helpers
     ├── cosmic-breaker/      # Breakout clone
     ├── elemental-sandbox/   # Falling sand simulation
     ├── neon-blocks/         # Tetris clone
@@ -54,6 +55,11 @@ export class YourGame {
    * CRITICAL: Failure here causes memory leaks.
    */
   stop() { ... }
+
+  /**
+   * Restart transient game state without DOM teardown.
+   */
+  resetGameState() { ... }
 }
 ```
 

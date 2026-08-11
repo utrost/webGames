@@ -3,6 +3,7 @@ import { CosmicBreaker } from '../cosmic-breaker/index.js';
 import { NeonFlow } from '../neon-flow/index.js';
 import { Asteroids } from '../asteroids/index.js';
 import { StarfallArmada } from '../starfall-armada/index.js';
+import { CircuitChase } from '../circuit-chase/index.js';
 import { NeonBlocks } from '../neon-blocks/index.js';
 import { Orbit } from '../orbit/index.js';
 import { ElementalSandbox } from '../elemental-sandbox/index.js';
@@ -155,6 +156,24 @@ describe('game input modality coverage', () => {
 
             game.pointerUpHandler({ preventDefault: vi.fn() });
             expect(game.touchState).toEqual({ left: false, right: false, fire: false });
+        } finally {
+            restore();
+        }
+    });
+
+    it('Circuit Chase maps keyboard and swipe input to queued maze turns', () => {
+        const { container, restore } = installDom();
+        try {
+            const game = new CircuitChase(container, vi.fn());
+            game.resetGameState();
+            game.setupInput();
+
+            game.handleKeyDown({ code: 'ArrowUp', preventDefault: vi.fn() });
+            expect(game.queuedDirection.name).toBe('up');
+
+            game.pointerDownHandler({ preventDefault: vi.fn(), clientX: 300, clientY: 300 });
+            game.pointerUpHandler({ preventDefault: vi.fn(), clientX: 360, clientY: 300 });
+            expect(game.queuedDirection.name).toBe('right');
         } finally {
             restore();
         }

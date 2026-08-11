@@ -2,7 +2,7 @@
 
 🎮 **[Play now → simiono.com/games/](https://simiono.com/games/)** | [GitHub Pages Mirror](https://utrost.github.io/webGames/)
 
-A collection of seven browser-based games built with vanilla JavaScript and HTML5 Canvas. Neon-retro aesthetic, no frameworks, minimal dependencies.
+A collection of eight browser-based games built with vanilla JavaScript and HTML5 Canvas. Neon-retro aesthetic, no frameworks, minimal dependencies.
 
 [How to play](docs/how-to-play.md) covers the current mouse, keyboard, and touch controls for every game. [New game checklist](docs/new-game-checklist.md) defines the quality gate for additional classics.
 
@@ -60,6 +60,7 @@ src/
 ├── games/                   # Game modules
 │   ├── asteroids/           # Vector neon shooter
 │   ├── cosmic-breaker/      # Breakout clone with power-ups
+│   ├── circuit-chase/       # Maze chase with tile-map/pathfinding logic
 │   ├── elemental-sandbox/   # Falling sand cellular automata
 │   ├── neon-blocks/         # Tetris with neon aesthetic
 │   ├── neon-flow/           # Pipe routing puzzle with color mixing
@@ -67,7 +68,7 @@ src/
 └── main.js                  # Lobby, game registry, achievements
 ```
 
-Each game implements a standard interface (`constructor(container, onGameOver)`, `init()`, `stop()`) for lobby load/unload.
+Each game implements a standard interface (`constructor(container, onGameOver)`, `init()`, `stop()`, `resetGameState()`) for lobby load/unload and in-game restarts.
 
 See [architecture.md](architecture.md) for full details, [games.md](games.md) for game specs, [src/games/README.md](src/games/README.md) for the cartridge layout, and each game folder's `DESIGN.md` for code-level design notes.
 
@@ -89,11 +90,11 @@ npm test              # Run all tests once
 npm run test:watch    # Run tests in watch mode
 ```
 
-**Test coverage:** 268 tests across 27 test files covering the shared core, responsive layout contract, input modality support, controls/help documentation, lifecycle contracts, code-design documentation, new-game quality gate documentation, and all seven game cartridges.
+**Test coverage:** 278 tests across 29 test files covering the shared core, responsive layout contract, input modality support, controls/help documentation, lifecycle contracts, code-design documentation, new-game quality gate documentation, and all eight game cartridges.
 
 Key areas:
 - Core: Vector2, StorageManager, GameLoop, StateMachine, ParticleSystem, PerfMonitor, StatsTracker, InputManager, AudioManager, CanvasScaler, ResponsiveLayout
-- Games: Asteroids entities, Cosmic Breaker levels, Neon Blocks shapes/gameplay, Neon Flow logic, Orbit physics, Elemental Sandbox simulation
+- Games: Asteroids entities, Cosmic Breaker levels, Circuit Chase tile-map/pathfinding, Neon Blocks shapes/gameplay, Neon Flow logic, Orbit physics, Elemental Sandbox simulation
 
 ## Prerequisites
 
